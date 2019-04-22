@@ -173,11 +173,14 @@ transform_raster_list=function(x, smooth=30, equal_scale=FALSE, raw_data=NULL){
         if (all(raw_data==0)) stop("raw_data must have at least one non-zero value.")
         SUPERMIN=min(min(raw_data), 0)
         MAXMIN=max(0, max(raw_data))-SUPERMIN
+		if (all(raw_data==0)) stop("At least one value should be non-zero value.")
         CONDITION=if(all(raw_data>=0)) 1 else if (all(raw_data<=0)) 2 else 3
         scAlEfUn_color=function(xx, smooth, supermin, maxmin, condition){
             if (condition==1){
                 small=1
                 big=ceiling(smooth*(xx-supermin)/maxmin)
+				if (big==0) big=1
+				if (big>smooth) big=smooth
             }
             if (condition==2){
                 big=smooth
@@ -186,12 +189,14 @@ transform_raster_list=function(x, smooth=30, equal_scale=FALSE, raw_data=NULL){
             }
             if (condition==3){
                 if (xx>=0){
-                    small=if (smooth %% 2 == 0) (smooth/2)+1 else  ((smooth+1)/2)+1
+					# bug fixed
+                    small=ceiling(smooth*(0-supermin)/maxmin)
                     big=ceiling(smooth*(xx-supermin)/maxmin)
                 } else {
                     small=floor(smooth*(xx-supermin)/maxmin)
                     if (small == 0) small=1
-                    big=if (smooth %% 2 == 0) smooth/2 else (smooth-1)/2
+					# bug fixed
+                    big=floor(smooth*(0-supermin)/maxmin)
                 }
             }
             c(small, big)
