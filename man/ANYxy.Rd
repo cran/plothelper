@@ -4,7 +4,8 @@
 \alias{ANYxy}
 \title{Generating Groups of Coordinates for Any Polygon}
 \usage{
-ANYxy(myfun, ..., MoreArgs = NULL, group = TRUE, todf = TRUE)
+ANYxy(myfun = NULL, ..., MoreArgs = NULL, group = TRUE,
+  todf = TRUE)
 }
 \arguments{
 \item{myfun}{your function to generate a single polygon.

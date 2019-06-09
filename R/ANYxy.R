@@ -41,9 +41,10 @@
 #'		start=-1, end=1, A=c(1, 2), MoreArgs=list(B=1), 
 #'		group=TRUE, todf=TRUE)
 #' ggplot(dat)+geom_line(aes(x, y, group=g, color=factor(g)))
-ANYxy=function(myfun, ..., MoreArgs=NULL, group=TRUE, todf=TRUE){ 
+ANYxy=function(myfun=NULL, ..., MoreArgs=NULL, group=TRUE, todf=TRUE){ 
 	stopifnot(group %in% c(TRUE, FALSE))
 	stopifnot(todf %in% c(TRUE, FALSE))
+	if (is.null(myfun)) myfun=HEARTXY
 	stopifnot(is.function(myfun))
 	if (! is.null(MoreArgs)) stopifnot(is.list(MoreArgs))
 	FINAL=mapply(FUN=myfun, ..., MoreArgs=MoreArgs, SIMPLIFY=FALSE)
@@ -55,3 +56,10 @@ ANYxy=function(myfun, ..., MoreArgs=NULL, group=TRUE, todf=TRUE){
 	}	
 	if (todf) do.call(rbind, FINAL) else FINAL
 }
+
+HEARTXY=function(x, y, r=1, n=30, p1=13, p2=5, p3=2, p4=1){
+	t=seq(0, 2*pi, length.out=n)
+	xcurve=r*sin(t)^3
+	ycurve=((p1*r)*cos(t) - (p2*r)*cos(2*t) - (p3*r)*cos(3*t) - p4*r*cos(4*t))/16
+	data.frame(x=xcurve+x, y=ycurve+y)
+ }

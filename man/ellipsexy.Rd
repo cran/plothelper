@@ -39,7 +39,8 @@ The rotation direction is anti-clockwise.}
 
 \item{n}{default is 40. The number of points used to 
 draw an arc. The larger, the smoother.
-It must at least be 4.}
+It must at least be 4. However, when \code{checks} is 
+FALSE, this check is ignored.}
 
 \item{xytype}{should be one of "middle" (default), 
 "bottomleft", "middleleft". It indicates the type of argument 

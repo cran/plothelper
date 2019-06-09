@@ -34,7 +34,7 @@ that the size and shape will not be influenced by
 the change of the coordinate systems 
 (even when a polar system is used). 
 Note: this function does not have 
-\code{linetype} argument.
+\code{linetype} and \code{n} arguments.
 }
 \details{
 Accepted properties are: 

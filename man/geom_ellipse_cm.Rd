@@ -50,7 +50,8 @@ not exactly 2 times larger.
   \item (8) \code{angle} angle of rotation from 0
 degree and in anti-clockwise direction.
   \item (9) \code{n} the number of points to 
-draw the shape.
+draw the shape. Note: it must be written inside 
+the \code{aes(...)} function.
   \item (10) \code{x} x coordinates of middle points. 
   \item (11) \code{y} y coordinates of middle points.
 }

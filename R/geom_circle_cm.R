@@ -5,7 +5,7 @@
 #' the change of the coordinate systems 
 #' (even when a polar system is used). 
 #' Note: this function does not have 
-#' \code{linetype} argument.
+#' \code{linetype} and \code{n} arguments.
 #' 
 #' Accepted properties are: 
 #' \itemize{

@@ -18,7 +18,7 @@ NA, it should be remove; otherwise, an error will be raised.}
 \item{answer}{the values whose frequencies you 
 want to know, e. g., "agree" and "disagree" 
 in your survey data. Default is NULL which means 
-all possibble answers in the whole data will be used.}
+all possible answers in the whole data will be used.}
 
 \item{checks}{whether to check the validity of the 
 input data. Default is TRUE. Do not turn it off unless you 

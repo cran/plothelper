@@ -28,7 +28,8 @@
 #' The rotation direction is anti-clockwise.
 #' @param n default is 40. The number of points used to 
 #' draw an arc. The larger, the smoother.
-#' It must at least be 4.
+#' It must at least be 4. However, when \code{checks} is 
+#' FALSE, this check is ignored.
 #' @param xytype should be one of "middle" (default), 
 #' "bottomleft", "middleleft". It indicates the type of argument 
 # x and y. If it is "middle", then x and y are the coordinates 
@@ -68,7 +69,9 @@
 #'			data=dat1, aes(x=x, y=y, group=g, fill=factor(g)), alpha=0.3)
 ellipsexy=function(x=0, y=0, a=2, b=1, start=0, end=6.283185, angle=0, n=40, xytype="middle", fan=FALSE, group=TRUE, todf=TRUE, checks=TRUE){ 
 
-	if (checks){
+	if (checks == TRUE){
+		if (any(n<4)) stop("Each element in n must be >= 4.")
+		# in case sometimes n=n-1, here n must at least be 4 rather than 3
 		if (is.null(x) || anyNA(x)) stop("x must not be NULL and must have no NA.")
 		if (is.null(y) || anyNA(y)) stop("y must not be NULL and must have no NA.")
 		if (is.null(a) || anyNA(a)) stop("a must not be NULL and must have no NA.")		
@@ -82,8 +85,6 @@ ellipsexy=function(x=0, y=0, a=2, b=1, start=0, end=6.283185, angle=0, n=40, xyt
 		stopifnot(todf %in% c(TRUE, FALSE))
 	}
 	if (! is.logical(fan)) stop("fan must be a vector of logical values.")
-	if (any(n<4)) stop("Each element in n must be >= 4.")
-	# in case sometimes n=n-1, here n must at least be 4 rather than 3
 	if (! xytype %in% c("bottomleft", "middle", "middleleft")) stop ("xytype must be one of bottomleft, middle, middleleft.")	
 	# if (all.equal(length(x), length(y), length(a), length(b), length(start), length(end), length(angel)) != TRUE) stop("x, y, a, b, start, end, angle must be of the same length.")
 	
