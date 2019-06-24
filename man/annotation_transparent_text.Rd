@@ -5,10 +5,11 @@
 \title{Layer for Transparent Text}
 \usage{
 annotation_transparent_text(label, xmin, xmax, ymin, ymax, bg = "black",
-  alpha = 0.5, interpolate = TRUE, expand = c(0.08, 0.08),
-  family = "SimHei", fontface = 1, reflow = FALSE,
-  place = "center", result = c("layer", "magick"), width = 800,
-  height = 600)
+  alpha = 0.5, interpolate = TRUE, result_interpolate = TRUE,
+  expand = c(0.08, 0.08), family = "SimHei", fontface = 1,
+  reflow = FALSE, place = "center", bg_trim = NULL,
+  result = c("layer", "magick"), width = 800, height = NULL,
+  res = 72)
 }
 \arguments{
 \item{label}{the text.}
@@ -37,6 +38,9 @@ a raster, this parameter is used and
 will be passed to \code{ggplot2::annotation_raster} 
 to draw a colored rectangle. Default is TRUE.}
 
+\item{result_interpolate}{whether to use interpolate 
+in the final result. Default is TRUE.}
+
 \item{expand}{sometimes 
 it is needed to slightly expand the x position and 
 y position to put the text so that they can be 
@@ -55,6 +59,13 @@ automatically. It will be passed to
 \item{place}{position adjustment used by 
 \code{ggfittext:;geom_fit_text}.}
 
+\item{bg_trim}{whether to trim \code{bg}. Most 
+of the time we do want to trim it. However, the 
+\code{magick::image_trim} function sometimes 
+trims wrongly. So you can turn it off. NOTE: the default 
+value of \code{bg_trim} is NULL, which means 
+DO NOT TRIM.}
+
 \item{result}{when it is "layer", the function can be 
 used as a ggplot layer. When it is "magick", the result 
 is only an image which is created by the magick package.}
@@ -67,7 +78,11 @@ not need to modify this. Default is 800.}
 \item{height}{the height of the 
 text rectange. It will be passed 
 to \code{magick::image_graph}. Most of the time you do 
-not need to modify this. Default is 600.}
+not need to modify this. Default is NULL, which means 
+it will be computed automatically.}
+
+\item{res}{resolution in pixels which will be passed 
+to \code{magick::image_graph}. Default is 72.}
 }
 \description{
 Suppose there is a colored rectangle

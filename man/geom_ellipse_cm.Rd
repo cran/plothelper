@@ -58,7 +58,7 @@ the \code{aes(...)} function.
 }
 \examples{
 library(ggplot2)
-dat=data.frame(x=c(1, 3, 5, 7, 9), y=rep(5, 5), R=1) 
+dat=data.frame(x=c(1, 3, 5, 7, 9), y=rep(5, 5)) 
 ggplot(dat)+xlim(0, 11)+ylim(1, 9)+
 	geom_ellipse_cm(aes(x=x, y=y), fill="red", ab=seq(1, 4, length.out=5))  
 ggplot(dat)+xlim(0, 11)+ylim(1, 9)+

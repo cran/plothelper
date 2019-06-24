@@ -31,25 +31,38 @@
 #' argument used by \code{ggplot2::annotation_raster}
 #' when the \code{raster} argument is a matrix or 
 #' raster.
+#' @param result_interpolate whether to interpolate in the 
+#' final result which is essentially an output of 
+#' \code{ggplot2::annotation_raster}. Default is TRUE.
 #' @param shape_trim this argument 
 #' decides whether to trim edges 
-#' of \code{shape} when \code{shape} is a gg 
-#' object or an image. It should be a number 
-#' between 0 and 100. Default is 0. If it is NULL, 
+#' of \code{shape}.
+#' It should be a number 
+#' between 0 and 100. Default is NULL. If it is NULL, 
 #' no trimming will be done. 
+#' @param raster_trim whether to trim raster. 
+#' Most of the time we do want to trim the raster.
+#' However, the \code{magick::image_trim} function 
+#' sometimes trims wrongly. So you may want to turn 
+#' it off. Default is NULL.
 #' @param result_trim how to trim the 
 #' final result. If you find your 
 #' figure loses some parts, you can try to turn this off. 
-#' Default is 0. Its usage is the same as \code{shape_trim}.
+#' Default is NULL.
 #' @param result when it is "layer", the function is a  
 #' ggplot layer. When it is "magick", the function only 
 #' create an image.
 #' @param width the width which will be passed 
 #' to \code{magick::image_graph}. Most of the time you do 
-#' not need to modify this. Default is 800.
+#' not need to modify this. Default is 800. HOWEVER, if the 
+#' final polygon has fuzzy edges, try to enlarge \code{width} 
+#' to make them look better.
 #' @param height the height which will be passed 
 #' to \code{magick::image_graph}. Most of the time you do 
-#' not need to modify this. Default is 600.
+#' not need to modify this. Default is NULL, which means 
+#' it will be computed automatically.
+#' @param res resolution in pixels which will be passed to 
+#' \code{magick::image_graph}. Default is 72.
 #'
 #' @export
 #' @examples
@@ -83,6 +96,7 @@
 #' p1=ggplot()+coord_fixed()+
 #' 	geom_tile(aes(x=1: 5, y=1: 5))
 #' p2=ggplot()+theme_void()+
+#' 	coord_cartesian(expand=FALSE)+
 #' 	geom_polygon(aes(x=c(0, 1, 1, 0), 
 #' 		y=c(0, 0, 1, 1)), fill="red")
 #' ggplot()+xlim(0, 11)+ylim(0, 6)+coord_fixed()+
@@ -93,7 +107,7 @@
 #' 		raster=p2
 #' 	)
 #' }
-annotation_shading_polygon=function(shape=data.frame(c(-1, 1, 0), c(0, 0, 1.732)), xmin=NULL, xmax=NULL, ymin=NULL, ymax=NULL, raster=NULL, interpolate=TRUE, shape_trim=0, result_trim=0, result=c("layer", "magick"), width=800, height=600){
+annotation_shading_polygon=function(shape=data.frame(c(-1, 1, 0), c(0, 0, 1.732)), xmin=NULL, xmax=NULL, ymin=NULL, ymax=NULL, raster=NULL, interpolate=TRUE, result_interpolate=TRUE, shape_trim=NULL, raster_trim=NULL, result_trim=NULL, result=c("layer", "magick"), width=800, height=NULL, res=72){
 
 	result=result[1]
 	stopifnot(result %in% c("layer", "magick"))
@@ -131,56 +145,86 @@ annotation_shading_polygon=function(shape=data.frame(c(-1, 1, 0), c(0, 0, 1.732)
 			ymax=poly_y_max
 		}
 		myshape=ggplot2::ggplot()+
-			ggplot2::coord_fixed(xlim=c(poly_x_min, poly_x_max), ylim=c(poly_y_min, poly_y_max), expand=FALSE)+
-			ggplot2::theme_void()+ggplot2::theme(plot.background=ggplot2::element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
+			ggplot2::coord_cartesian(xlim=c(poly_x_min, poly_x_max), ylim=c(poly_y_min, poly_y_max), expand=FALSE)+
+			ggplot2::theme_void()+
+			ggplot2::theme(plot.background=ggplot2::element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
 			ggplot2::geom_polygon(aes(x=shape[, 1], y=shape[, 2]), color="black", fill="black")
-		img_shape=magick::image_graph(width=width, height=height, bg="transparent")
+		adj_height=if (is.null(height)) ADJUST_HEIGHT(W=width, XMIN=poly_x_min, XMAX=poly_x_max, YMIN=poly_y_min, YMAX=poly_y_max) else height
+		img_shape=magick::image_graph(width=width, height=adj_height, bg="transparent", res=res)
 		print(myshape)
-		dev.off()
-		img_shape=magick::image_trim(img_shape, fuzz=shape_trim)	
+		grDevices::dev.off()
+		if (! is.null(shape_trim)) img_shape=magick::image_trim(img_shape, fuzz=shape_trim)	
+		# img_shape=magick::image_trim(img_shape, fuzz=0)	
 	}
 	if (cla_shape == "gg"){
-		if (is.null(xmin)) stop("When shape is of class gg, xmin, xmax, ymin, ymax must not be NULL.")
+		# raster provided by users here should have axis with expand=FALSE
+		if (result == "layer"){
+			if (is.null(xmin)) stop("When shape is of class gg, xmin, xmax, ymin, ymax must not be NULL.")
+		}
 		shape=shape+ggplot2::theme_void()
-		img_shape=magick::image_graph(width=width, height=height, bg="transparent")
+		if (is.null(height)){
+			shape_gg_info=ggplot2::summarise_layout(ggplot2::ggplot_build(shape))
+			shape_gg_info=as.numeric(shape_gg_info[1, c("xmin", "xmax", "ymin", "ymax")])
+			adj_height=ADJUST_HEIGHT(W=width, XMIN=shape_gg_info[1], XMAX=shape_gg_info[2], YMIN=shape_gg_info[3], YMAX=shape_gg_info[4])
+		} else {
+			adj_height=height
+		}		
+		img_shape=magick::image_graph(width=width, height=adj_height, bg="transparent", res=res)
 		print(shape)
-		dev.off()
+		grDevices::dev.off()
 		if (! is.null(shape_trim)) img_shape=magick::image_trim(img_shape, fuzz=shape_trim)	
 	}
 	if (cla_shape == "magick-image"){
-		if (is.null(xmin)) stop("When shape is of class magick-image, xmin, xmax, ymin, ymax must not be NULL.")	
+		if (result == "layer"){
+			if (is.null(xmin)) stop("When shape is of class magick-image, xmin, xmax, ymin, ymax must not be NULL.")
+		}
 		img_shape=if (! is.null(shape_trim)) magick::image_trim(shape, fuzz=shape_trim) else shape
 	}
 	
+	shape_info=as.numeric(magick::image_info(img_shape)[1, 2: 3])
+	# recalculate width
+	width=shape_info[1]
+	
 	# coord for raster when shape is not df
 	if (cla_shape %in% c("magick-image", "gg")){
-		shape_info=magick::image_info(img_shape)
 		poly_x_min=0
-		poly_x_max=shape_info[1, 2, drop=TRUE]
+		poly_x_max=shape_info[1]
 		poly_y_min=0
-		poly_y_max=shape_info[1, 3, drop=TRUE]
+		poly_y_max=shape_info[2]
 	}
 	
 	# raster
 	if (cla_raster  %in% c("raster", "matrix")){
-		bggg=ggplot2::ggplot()+ggplot2::coord_fixed(xlim=c(poly_x_min, poly_x_max), ylim=c(poly_y_min, poly_y_max), expand=FALSE)+
-			ggplot2::theme_void()+ggplot2::theme(plot.background=ggplot2::element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
+		bggg=ggplot2::ggplot()+
+			ggplot2::coord_cartesian(xlim=c(poly_x_min, poly_x_max), ylim=c(poly_y_min, poly_y_max), expand=FALSE)+
+			ggplot2::theme_void()+
+			ggplot2::theme(plot.background=ggplot2::element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
 			ggplot2::annotation_raster(raster=raster, xmin=poly_x_min, xmax=poly_x_max, ymin=poly_y_min, ymax=poly_y_max, interpolate=interpolate)
-		img_raster=magick::image_graph(width=width, height=height, bg="transparent")
+		adj_height=if (is.null(height)) ADJUST_HEIGHT(W=width, XMIN=poly_x_min, XMAX=poly_x_max, YMIN=poly_y_min, YMAX=poly_y_max) else height 
+		img_raster=magick::image_graph(width=width, height=adj_height, bg="transparent", res=res)
 		print(bggg)
-		dev.off()
-		img_raster=magick::image_trim(img_raster)
+		grDevices::dev.off()
+		if (! is.null(raster_trim)) img_raster=magick::image_trim(img_raster, fuzz=raster_trim)
+		img_raster=ReSiZe_tO_stAndArd(x=img_raster, standard=img_shape)
 	} 
 	if (cla_raster == "gg"){
-		img_raster=magick::image_graph(width=width, height=height, bg="transparent")
+		# raster here should have axis with expand=FALSE
+		if (is.null(height)){
+			raster_gg_info=ggplot2::summarise_layout(ggplot2::ggplot_build(raster))
+			raster_gg_info=as.numeric(raster_gg_info[1, c("xmin", "xmax", "ymin", "ymax")])
+			adj_height=ADJUST_HEIGHT(W=width, XMIN=raster_gg_info[1], XMAX=raster_gg_info[2], YMIN=raster_gg_info[3], YMAX=raster_gg_info[4])
+		} else {
+			adj_height=height
+		}
+		img_raster=magick::image_graph(width=width, height=adj_height, bg="transparent", res=res)
 		print(raster)
-		dev.off()
-		img_raster=magick::image_trim(img_raster)
-		img_raster=resize_to_standard(x=img_raster, standard=img_shape)		
+		grDevices::dev.off()
+		if (! is.null(raster_trim)) img_raster=magick::image_trim(img_raster, fuzz=raster_trim)
+		img_raster=ReSiZe_tO_stAndArd(x=img_raster, standard=img_shape)		
 	}
 	if (cla_raster == "magick-image"){
-		img_raster=magick::image_trim(raster)
-		img_raster=resize_to_standard(x=img_raster, standard=img_shape)		
+		if (! is.null(raster_trim)) raster=magick::image_trim(raster, fuzz=raster_trim)
+		img_raster=ReSiZe_tO_stAndArd(x=raster, standard=img_shape)		
 	}		
 
 	# composite
@@ -192,6 +236,6 @@ annotation_shading_polygon=function(shape=data.frame(c(-1, 1, 0), c(0, 0, 1.732)
 	if (result == "magick"){
 		comp
 	} else {
-		ggplot2::annotation_raster(raster=comp, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+		ggplot2::annotation_raster(raster=comp, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, interpolate=result_interpolate)
 	}
 }

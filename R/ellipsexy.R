@@ -30,6 +30,11 @@
 #' draw an arc. The larger, the smoother.
 #' It must at least be 4. However, when \code{checks} is 
 #' FALSE, this check is ignored.
+#' NOTE: to draw a triangle, you must use 
+#' \code{ellipsexy(n=4, fan=FALSE)}, 
+#' as the first and 4th points are so close. 
+#' Similarly, to draw a rectangle, 
+#' use \code{ellipsexy(n=5, fan=FALSE)}.
 #' @param xytype should be one of "middle" (default), 
 #' "bottomleft", "middleleft". It indicates the type of argument 
 # x and y. If it is "middle", then x and y are the coordinates 
@@ -68,7 +73,7 @@
 #' 	geom_polygon(show.legend=FALSE, 
 #'			data=dat1, aes(x=x, y=y, group=g, fill=factor(g)), alpha=0.3)
 ellipsexy=function(x=0, y=0, a=2, b=1, start=0, end=6.283185, angle=0, n=40, xytype="middle", fan=FALSE, group=TRUE, todf=TRUE, checks=TRUE){ 
-
+	
 	if (checks == TRUE){
 		if (any(n<4)) stop("Each element in n must be >= 4.")
 		# in case sometimes n=n-1, here n must at least be 4 rather than 3

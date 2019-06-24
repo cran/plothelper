@@ -40,7 +40,12 @@ The rotation direction is anti-clockwise.}
 \item{n}{default is 40. The number of points used to 
 draw an arc. The larger, the smoother.
 It must at least be 4. However, when \code{checks} is 
-FALSE, this check is ignored.}
+FALSE, this check is ignored.
+NOTE: to draw a triangle, you must use 
+\code{ellipsexy(n=4, fan=FALSE)}, 
+as the first and 4th points are so close. 
+Similarly, to draw a rectangle, 
+use \code{ellipsexy(n=5, fan=FALSE)}.}
 
 \item{xytype}{should be one of "middle" (default), 
 "bottomleft", "middleleft". It indicates the type of argument 

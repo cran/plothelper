@@ -30,6 +30,8 @@
 #' a raster, this parameter is used and 
 #' will be passed to \code{ggplot2::annotation_raster} 
 #' to draw a colored rectangle. Default is TRUE.
+#' @param result_interpolate whether to use interpolate 
+#' in the final result. Default is TRUE.
 #' @param expand sometimes 
 #' it is needed to slightly expand the x position and 
 #' y position to put the text so that they can be 
@@ -43,6 +45,12 @@
 #' \code{ggfittext::geom_fit_text}. Default is FALSE.
 #' @param place position adjustment used by 
 #' \code{ggfittext:;geom_fit_text}.
+#' @param bg_trim whether to trim \code{bg}. Most 
+#' of the time we do want to trim it. However, the 
+#' \code{magick::image_trim} function sometimes 
+#' trims wrongly. So you can turn it off. NOTE: the default 
+#' value of \code{bg_trim} is NULL, which means 
+#' DO NOT TRIM.
 #' @param result when it is "layer", the function can be 
 #' used as a ggplot layer. When it is "magick", the result 
 #' is only an image which is created by the magick package.
@@ -53,7 +61,10 @@
 #' @param height the height of the 
 #' text rectange. It will be passed 
 #' to \code{magick::image_graph}. Most of the time you do 
-#' not need to modify this. Default is 600.
+#' not need to modify this. Default is NULL, which means 
+#' it will be computed automatically.
+#' @param res resolution in pixels which will be passed 
+#' to \code{magick::image_graph}. Default is 72.
 #'
 #' @export
 #' @import scales
@@ -99,14 +110,15 @@
 #' 		bg=m, alpha=1
 #' 	)
 #' }
-annotation_transparent_text=function(label, xmin, xmax, ymin, ymax, bg="black", alpha=0.5, interpolate=TRUE, expand=c(0.08, 0.08), family="SimHei", fontface=1, reflow=FALSE, place="center", result=c("layer", "magick"), width=800, height=600){
+annotation_transparent_text=function(label, xmin, xmax, ymin, ymax, bg="black", alpha=0.5, interpolate=TRUE, result_interpolate=TRUE, expand=c(0.08, 0.08), family="SimHei", fontface=1, reflow=FALSE, place="center", bg_trim=NULL, result=c("layer", "magick"), width=800, height=NULL, res=72){
 	
 	result=result[1]
 	stopifnot(result %in% c("layer", "magick"))
 	bg_class=class(bg)[1]
 	if (grepl("magick", bg_class)) bg_class="magick-image"
+	if ( ! bg_class %in% c("character", "matrix", "raster", "magick-image", "gg")) stop("bg must be a character vector, a matrix, a  raster, a image or a gg object.")
 	if (bg_class == "matrix"){
-		if (! is.character(bg)) stop("bg must be a character vector, a matrix object or a raster object. ")
+		if (! is.character(bg)) stop("When bg is a matrix, its elements must be names of colors. ")
 	}
 	if (bg_class == "character") bg=matrix(scales::alpha(bg, alpha), nrow=1)
 
@@ -121,41 +133,59 @@ annotation_transparent_text=function(label, xmin, xmax, ymin, ymax, bg="black", 
 	
 	# text
 	tegg=ggplot()+coord_fixed(xlim=c(XMIN, XMAX), ylim=c(YMIN, YMAX), expand=FALSE)+
-		theme_void()+theme(plot.background=element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
+		ggplot2::theme_void()+ggplot2::theme(plot.background=ggplot2::element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
 		ggfittext::geom_fit_text(aes(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax, label=label), reflow=reflow, grow=TRUE, family=family, fontface=fontface, place=place)
 	te_height=round(width*(YMAX-YMIN)/(XMAX-XMIN), 0)
-	img_tegg=image_graph(width=width, height=te_height, bg="transparent")
+	img_tegg=magick::image_graph(width=width, height=te_height, bg="transparent", res=res)
 	print(tegg)
-	dev.off()
-	
+	grDevices::dev.off()
+
 	# bg
-	if (bg_class %in% c("character", "matrix", "raster", "magick-image")){
-		bggg=ggplot()+coord_fixed(xlim=c(XMIN, XMAX), ylim=c(YMIN, YMAX), expand=FALSE)+
-		theme_void()+theme(plot.background=element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
-		annotation_raster(raster=bg, xmin=XMIN, ymin=YMIN, xmax=XMAX, ymax=YMAX, interpolate=interpolate)
-	} else {
-		bggg=bg
-	}
-	img_bggg=image_graph(width=width, height=height, bg="transparent")
-	print(bggg)
-	dev.off()	
-	img_bggg=image_trim(img_bggg)
-	img_bggg=resize_to_standard(x=img_bggg, standard=img_tegg)
+	if (bg_class %in% c("character", "matrix", "raster")){
+		bggg=ggplot2::ggplot()+ggplot2::coord_fixed(xlim=c(XMIN, XMAX), ylim=c(YMIN, YMAX), expand=FALSE)+
+			ggplot2::theme_void()+
+			ggplot2::theme(plot.background=ggplot2::element_rect(color=NA, fill="transparent"), plot.margin=unit(c(0, 0, 0, 0), "inch"))+
+			ggplot2::annotation_raster(raster=bg, xmin=XMIN, ymin=YMIN, xmax=XMAX, ymax=YMAX, interpolate=interpolate)
+		adj_height=if (is.null(height)) ADJUST_HEIGHT(W=width, XMIN=XMIN, XMAX=XMAX, YMIN=YMIN, YMAX=YMAX) else height
+		img_bggg=magick::image_graph(width=width, height=adj_height, bg="transparent", res=res)
+		print(bggg)
+		grDevices::dev.off()	
+		if ( ! is.null(bg_trim)) img_bggg=magick::image_trim(img_bggg, bg_trim)
+		img_bggg=ReSiZe_tO_stAndArd(x=img_bggg, standard=img_tegg)
+	} else if (bg_class == "magick-image"){
+		if ( ! is.null(bg_trim)) bg=magick::image_trim(bg, bg_trim)
+		img_bggg=ReSiZe_tO_stAndArd(x=bg, standard=img_tegg)
+	} else if (bg_class == "gg"){
+		if (is.null(height)){
+			# raster here should have axis with expand=FALSE
+			bg_gg_info=ggplot2::ggplot_build(bg)
+			bg_gg_info=ggplot2::summarise_layout(bg_gg_info)
+			bg_gg_info=as.numeric(bg_gg_info[1, c("xmin", "xmax", "ymin", "ymax")])
+			adj_height=ADJUST_HEIGHT(W=width, XMIN=bg_gg_info[1], XMAX=bg_gg_info[2], YMIN=bg_gg_info[3], YMAX=bg_gg_info[4])
+		} else {
+			adj_height=height
+		}
+		img_bggg=magick::image_graph(width=width, height=adj_height, bg="transparent", res=res)
+		print(bg)
+		grDevices::dev.off()	
+		if ( ! is.null(bg_trim)) img_bggg=magick::image_trim(img_bggg, bg_trim)
+		img_bggg=ReSiZe_tO_stAndArd(x=img_bggg, standard=img_tegg)
+	}	
 	
 	# composite
-	# comp=image_trim(image_composite(img_tegg, img_bggg, "out", "+0+0"))
-	comp=image_composite(img_tegg, img_bggg, "out", "+0+0") # DO NOT TRIM
+	# comp=magick::image_trim(image_composite(img_tegg, img_bggg, "out", "+0+0"))
+	comp=magick::image_composite(img_tegg, img_bggg, "out", "+0+0") # DO NOT TRIM
 	if (result == "magick"){
 		comp
 	} else {
-		annotation_raster(grDevices::as.raster(comp), xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
+		ggplot2::annotation_raster(comp, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, interpolate=result_interpolate)
 	}
 }
 	
-resize_to_standard=function(x, standard){
-	sinfo=magick::image_info(standard)
-	swidth=sinfo[1, 2, drop=TRUE]
-	sheight=sinfo[1, 3, drop=TRUE]
-	ssize=paste(swidth, "x", sheight, "!", sep="")
+ReSiZe_tO_stAndArd=function(x, standard){
+	sinfo=as.numeric(magick::image_info(standard)[1, 2: 3])
+	ssize=paste(sinfo[1], "x", sinfo[2], "!", sep="")
 	magick::image_resize(x, ssize)
 }
+
+ADJUST_HEIGHT=function(W, XMIN, XMAX, YMIN, YMAX) floor(W*((YMAX-YMIN)/(XMAX-XMIN)))

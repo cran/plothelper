@@ -8,9 +8,10 @@ with Shading Colors}
 \usage{
 annotation_shading_polygon(shape = data.frame(c(-1, 1, 0), c(0, 0,
   1.732)), xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
-  raster = NULL, interpolate = TRUE, shape_trim = 0,
-  result_trim = 0, result = c("layer", "magick"), width = 800,
-  height = 600)
+  raster = NULL, interpolate = TRUE, result_interpolate = TRUE,
+  shape_trim = NULL, raster_trim = NULL, result_trim = NULL,
+  result = c("layer", "magick"), width = 800, height = NULL,
+  res = 72)
 }
 \arguments{
 \item{shape}{the polygon can be 
@@ -43,17 +44,27 @@ argument used by \code{ggplot2::annotation_raster}
 when the \code{raster} argument is a matrix or 
 raster.}
 
+\item{result_interpolate}{whether to interpolate in the 
+final result which is essentially an output of 
+\code{ggplot2::annotation_raster}. Default is TRUE.}
+
 \item{shape_trim}{this argument 
 decides whether to trim edges 
-of \code{shape} when \code{shape} is a gg 
-object or an image. It should be a number 
-between 0 and 100. Default is 0. If it is NULL, 
+of \code{shape}.
+It should be a number 
+between 0 and 100. Default is NULL. If it is NULL, 
 no trimming will be done.}
+
+\item{raster_trim}{whether to trim raster. 
+Most of the time we do want to trim the raster.
+However, the \code{magick::image_trim} function 
+sometimes trims wrongly. So you may want to turn 
+it off. Default is NULL.}
 
 \item{result_trim}{how to trim the 
 final result. If you find your 
 figure loses some parts, you can try to turn this off. 
-Default is 0. Its usage is the same as \code{shape_trim}.}
+Default is NULL.}
 
 \item{result}{when it is "layer", the function is a
 ggplot layer. When it is "magick", the function only 
@@ -61,11 +72,17 @@ create an image.}
 
 \item{width}{the width which will be passed 
 to \code{magick::image_graph}. Most of the time you do 
-not need to modify this. Default is 800.}
+not need to modify this. Default is 800. HOWEVER, if the 
+final polygon has fuzzy edges, try to enlarge \code{width} 
+to make them look better.}
 
 \item{height}{the height which will be passed 
 to \code{magick::image_graph}. Most of the time you do 
-not need to modify this. Default is 600.}
+not need to modify this. Default is NULL, which means 
+it will be computed automatically.}
+
+\item{res}{resolution in pixels which will be passed to 
+\code{magick::image_graph}. Default is 72.}
 }
 \description{
 \code{ggplot2::annotation_raster} can only 
@@ -105,6 +122,7 @@ tt=annotation_shading_polygon(
 p1=ggplot()+coord_fixed()+
 	geom_tile(aes(x=1: 5, y=1: 5))
 p2=ggplot()+theme_void()+
+	coord_cartesian(expand=FALSE)+
 	geom_polygon(aes(x=c(0, 1, 1, 0), 
 		y=c(0, 0, 1, 1)), fill="red")
 ggplot()+xlim(0, 11)+ylim(0, 6)+coord_fixed()+
