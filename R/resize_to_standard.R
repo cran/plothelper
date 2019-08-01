@@ -34,7 +34,7 @@
 #' @param scale Default is TRUE. It is only used when 
 #' only one of width and height is to 
 #' be modified. This parameter 
-#' decises whether the image is automatically scaled.
+#' decides whether the image is automatically scaled.
 #' 
 #' @export
 resize_to_standard=function(x, standard=0.5, what="all", scale=TRUE){

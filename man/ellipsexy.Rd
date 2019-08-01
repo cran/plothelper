@@ -47,8 +47,9 @@ as the first and 4th points are so close.
 Similarly, to draw a rectangle, 
 use \code{ellipsexy(n=5, fan=FALSE)}.}
 
-\item{xytype}{should be one of "middle" (default), 
-"bottomleft", "middleleft". It indicates the type of argument 
+\item{xytype}{should be one of "middle/center" (default), 
+"bottomleft", "middleleft/left/centerleft". 
+It indicates the type of argument 
 of the middle point of an ellipse. If it is "middleleft", x and 
 y are the middle-left coordinates before rotation. If it is 
 "bottomleft", x and y are the coordinates of the 

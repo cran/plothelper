@@ -4,7 +4,7 @@
 \alias{enlarge_raster}
 \title{Enlarge a Color Matrix}
 \usage{
-enlarge_raster(x, n = c(10, 10))
+enlarge_raster(x, n = c(10, 10), row_first = TRUE)
 }
 \arguments{
 \item{x}{a color matrix or raster. It should
@@ -14,6 +14,10 @@ have at least 1 row and 1 column with no NAs.}
 the number will be repeated twice. The two numbers 
 indicate how many colors you will get in the result per 
 row and per column. Default is \code{c(10, 10)}.}
+
+\item{row_first}{enlarge rows first or enlarge columns 
+first? Default is TRUE. The results are almost the same, 
+so you do not need to change this.}
 }
 \description{
 This is a convenient wrapper of 

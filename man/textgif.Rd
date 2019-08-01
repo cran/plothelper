@@ -5,13 +5,13 @@
 \title{Simple Text ".gif" File}
 \usage{
 textgif(text, text_color = NULL, bg_color = NULL, reflow = FALSE,
-  width = 4, height = 2, family = "SimHei", fontface = 1,
-  fps = 2, output = NULL)
+  width = 200, height = 100, family = "SimHei", fontface = 1,
+  fps = 2, output = NULL, ...)
 }
 \arguments{
 \item{text}{must be a character vector.}
 
-\item{text_color}{color of the texts. Its 
+\item{text_color}{colors of the texts. Its 
 length must be the same as that of 
 \code{text}.}
 
@@ -26,9 +26,13 @@ several lines. However, you can separate
 lines manually by using line 
 break.}
 
-\item{width}{width of picture}
+\item{width}{the width of the 
+final gif object. Default is 200.
+NOTE: how texts are adjusted in the text box 
+depends on the values of width and height.}
 
-\item{height}{height of picture}
+\item{height}{the height of the 
+final gif object. Default is 100.}
 
 \item{family}{default is "SimHei" so that 
 Chinese characters can be shown. However, 
@@ -49,13 +53,17 @@ rather than 3, 6, 7.}
 an object is created. Otherwise, object will not 
 only be created but also be saved with a 
 file name (".gif") represented by this argument.}
+
+\item{...}{extra arguments used by 
+\code{ggfittext::geom_fit_text}, 
+e. g., angle (0 to 360), lineheight.}
 }
 \description{
 This is a wrapper of functions in package
 ggfittext and magick. The output is 
 a ".gif" with changing texts and colors.
 Characters are automatically enlarged or 
-shrinked.
+shrunk.
 }
 \examples{
 \donttest{
@@ -63,6 +71,6 @@ mytext=c("AAA", "BBB", "CCC")
 color1=c("orange", "red", "white")
 color2=c("black", "blue", "green")
 g1=textgif(mytext, text_color=color1, bg_color=color2, 
-	width=5, height=3, fps=2, family="serif")
+	width=180, height=120, fps=2, family="serif")
 }
 }

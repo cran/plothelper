@@ -4,13 +4,17 @@
 \alias{round_text}
 \title{Converting Numeric Values into Characters with the Same Digits}
 \usage{
-round_text(x, digits = 2)
+round_text(x, digits = 2, na = NULL)
 }
 \arguments{
 \item{x}{a vector of numeric values.}
 
 \item{digits}{digits which is to be passed 
 to \code{round}. It should not be smaller than 0.}
+
+\item{na}{how to show NAs. The default is 
+to show " NA", however, you can change it 
+to "NA" or simply \code{NA}.}
 }
 \description{
 This simple function is to facilitate something like 
@@ -20,5 +24,5 @@ same digits after the decimal point.
 }
 \examples{
 v=c(3, 3.1, 3.456, 3.452, 3.77, NA, 0, 10.56332)
-res=round_text(v, 2)
+res=round_text(v, 2, na=NA)
 }

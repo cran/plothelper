@@ -35,8 +35,9 @@
 #' as the first and 4th points are so close. 
 #' Similarly, to draw a rectangle, 
 #' use \code{ellipsexy(n=5, fan=FALSE)}.
-#' @param xytype should be one of "middle" (default), 
-#' "bottomleft", "middleleft". It indicates the type of argument 
+#' @param xytype should be one of "middle/center" (default), 
+#' "bottomleft", "middleleft/left/centerleft". 
+#' It indicates the type of argument 
 # x and y. If it is "middle", then x and y are the coordinates 
 #' of the middle point of an ellipse. If it is "middleleft", x and 
 #' y are the middle-left coordinates before rotation. If it is 
@@ -90,7 +91,9 @@ ellipsexy=function(x=0, y=0, a=2, b=1, start=0, end=6.283185, angle=0, n=40, xyt
 		stopifnot(todf %in% c(TRUE, FALSE))
 	}
 	if (! is.logical(fan)) stop("fan must be a vector of logical values.")
-	if (! xytype %in% c("bottomleft", "middle", "middleleft")) stop ("xytype must be one of bottomleft, middle, middleleft.")	
+	if (! xytype %in% c("bottomleft", "middle", "middleleft", "center", "centerleft", "left")) stop ("xytype must be one of bottomleft, middle/center, middleleft/centerleft/left.")
+	if (xytype=="center") xytype="middle"
+	if (xytype %in% c("centerleft", "left")) xytype="middleleft"
 	# if (all.equal(length(x), length(y), length(a), length(b), length(start), length(end), length(angel)) != TRUE) stop("x, y, a, b, start, end, angle must be of the same length.")
 	
 	ELLIPSEXY=function(X, Y, A, B, START, END, N, XYTYPE, FAN){

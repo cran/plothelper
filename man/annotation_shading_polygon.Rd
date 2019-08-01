@@ -16,9 +16,13 @@ annotation_shading_polygon(shape = data.frame(c(-1, 1, 0), c(0, 0,
 \arguments{
 \item{shape}{the polygon can be 
 a data frame (or matrix object, or tbl_df object) 
-with x and y coordinates, 
-a plot created by ggplot or a image 
-read into R by \code{magick::image_read}.}
+with x and y coordinates (that is, with two columns), 
+a plot created by ggplot or an image 
+read into R by \code{magick::image_read}.
+If it is a plot created by ggplot, its axes can 
+be of numeric, discrete or date/datetime type; 
+however, when the type is date/datetime, 
+the plot should not use \code{ggplot2::coord_fixed}.}
 
 \item{xmin}{the left side of the position to 
 put the polygon. When 
@@ -77,9 +81,8 @@ final polygon has fuzzy edges, try to enlarge \code{width}
 to make them look better.}
 
 \item{height}{the height which will be passed 
-to \code{magick::image_graph}. Most of the time you do 
-not need to modify this. Default is NULL, which means 
-it will be computed automatically.}
+to \code{magick::image_graph}. DO SEE Details below 
+to see how to use this parameter.}
 
 \item{res}{resolution in pixels which will be passed to 
 \code{magick::image_graph}. Default is 72.}
@@ -91,41 +94,65 @@ function can draw polygons of any shape
 with shading colors. See the \code{shape} 
 argument and the \code{raster} argument.
 }
+\details{
+\code{height} can be used in the 
+following ways: 
+\itemize{
+  \item (1) an integer which will be 
+directly passed to \code{image::graph}.
+  \item (2) a character-like integer, 
+e.g., \code{height = "0.5"}. Suppose \code{width = 400}, 
+the height that will be used is 400*0.5 = 200. 
+This effectively prevents the image from becoming 
+too large.
+  \item (3) \code{height = "coord_fixed"}. 
+the ratio between height and width will 
+be (top-bottom)/(right-left). And top, bottom,  
+right and left are extreme values of \code{shape} 
+when the latter is of class data.frame/matrix/gg.
+  \item (4) \code{height = "image"}. the width and height 
+will be the width and height of raster when raster is 
+a magick object.
+  \item (5) \code{height = NULL}, the default. 
+Now height is computed automatically. 
+A ratio is computed first,  
+ratio = (top-bottom)/(right-left). if the ratio is larger 
+than 5 or smaller than 0.2, then height will be 
+width*5 or width*0.2; else, the height will be treated 
+in the same way as in (3) above. If \code{shape} is 
+of class gg and it has uses \code{coord_flip()}, the 
+height will be automatically adjusted. All these works 
+are needed to prevent the image from becoming too large.
+}
+}
 \examples{
 \donttest{
 # Example 1
 poly=ellipsexy(-1, 0, a=1, b=1)
 m=matrix(rainbow(7))
 ggplot()+
-	coord_fixed(expand=FALSE)+
-	xlim(-3, 6)+ylim(-1.5, 1.5)+
+	coord_fixed()+
 	annotation_shading_polygon(
-		poly, 
-		raster=m
+		poly, raster=m
 	)+
 	annotation_shading_polygon(
-		poly, 
+		poly, raster=m, 
 		xmin=1, xmax=5, 
 		ymin=-1, ymax=1, 
-		raster=m
 	)
 #
 # Example 2, only an image
 tt=annotation_shading_polygon(
-	poly, 
-	result="magick", 
+	poly, result="magick", 
 	width=280, height=280
 )
 #
 # Example 3, both shape and raster are 
 # ggplot plots.
-p1=ggplot()+coord_fixed()+
-	geom_tile(aes(x=1: 5, y=1: 5))
-p2=ggplot()+theme_void()+
-	coord_cartesian(expand=FALSE)+
-	geom_polygon(aes(x=c(0, 1, 1, 0), 
-		y=c(0, 0, 1, 1)), fill="red")
-ggplot()+xlim(0, 11)+ylim(0, 6)+coord_fixed()+
+p1=ggplot()+geom_tile(aes(x=1: 5, y=1: 5))
+p2=ggplot()+geom_polygon(aes(x=c(0, 1, 1, 0), 
+		y=c(0, 0, 1, 1)), fill="red")+theme_void()
+ggplot()+coord_fixed()+
 	annotation_shading_polygon(
 		shape=p1, 
 		xmin=1, xmax=10, 

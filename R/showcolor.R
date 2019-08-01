@@ -26,16 +26,16 @@ showcolor=function(x, label_size=15, ...){
 	raw_name=paste(1: lenx, x)
 	cat("The colors are: \n")
 	for (i in raw_name) cat(i, "\n")
-	ggplot()+
-		geom_bar(show.legend=FALSE, stat="identity", aes(x=1: lenx, y=rep(1, lenx)), fill=x, ...)+
-		scale_x_continuous(labels=withname_slash_n, breaks=1: lenx, expand=expand_scale(c(0, 0)))+
-		scale_y_continuous(limits=c(0, 1), expand=expand_scale(c(0, 0)))+
-		theme(
-			panel.background=element_blank(), 
-			panel.grid=element_blank(),
-			axis.ticks=element_blank(),
-			axis.title=element_blank(), 
-			axis.text.y=element_blank(), 
-			axis.text.x=element_text(size=label_size)
+	ggplot2::ggplot()+
+		ggplot2::geom_bar(show.legend=FALSE, stat="identity", aes(x=1: lenx, y=rep(1, lenx)), fill=x, ...)+
+		ggplot2::scale_x_continuous(labels=withname_slash_n, breaks=1: lenx, expand=ggplot2::expand_scale(c(0, 0)))+
+		ggplot2::scale_y_continuous(limits=c(0, 1), expand=ggplot2::expand_scale(c(0, 0)))+
+		ggplot2::theme(
+			panel.background=ggplot2::element_blank(), 
+			panel.grid=ggplot2::element_blank(),
+			axis.ticks=ggplot2::element_blank(),
+			axis.title=ggplot2::element_blank(), 
+			axis.text.y=ggplot2::element_blank(), 
+			axis.text.x=ggplot2::element_text(size=label_size, lineheight=0.8)
 		)
 }

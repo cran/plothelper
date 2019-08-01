@@ -17,8 +17,9 @@
 #' Note: "radian = degree * pi / 180". Its length can be 
 #' larger than 1.
 #' The rotation direction is anti-clockwise.
-#' @param xytype should be one of "middle" (default), 
-#' "bottomleft", "middleleft". It indicates the type of argument 
+#' @param xytype should be one of "middle/center" (default), 
+#' "bottomleft", "middleleft/centerleft/left". 
+#' It indicates the type of argument 
 # x and y. If it is "middle", then x and y are the coordinates 
 #' of the middle point of an shape. If it is "middleleft", x and 
 #' y are the middle-left coordinates before rotation. If it is 
@@ -60,7 +61,10 @@ rectxy=function(x=0, y=0, a=1, b=1, angle=0, xytype="middle", group=TRUE, todf=T
 		stopifnot(todf %in% c(TRUE, FALSE))
 	}
 
-	if (! xytype %in% c("bottomleft", "middle", "middleleft")) stop ("xytype must be one of bottomleft, middle, middleleft.")
+	if (! xytype %in% c("bottomleft", "middle", "middleleft", "center", "centerleft", "left")) stop ("xytype must be one of bottomleft, middle/center, middleleft/centerleft/left.")
+	if (xytype=="center") xytype="middle"
+	if (xytype %in% c("centerleft", "left")) xytype="middleleft"
+	
 	if (xytype=="bottomleft") 
 		RECTXY=function(X, Y, A, B) data.frame(x=c(X, X+A, X+A, X), y=rep(c(Y, Y+B), each=2))
 	if (xytype=="middle")

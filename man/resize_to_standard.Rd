@@ -41,7 +41,7 @@ the result's width and height are 50 * 3 = 150,
 \item{scale}{Default is TRUE. It is only used when 
 only one of width and height is to 
 be modified. This parameter 
-decises whether the image is automatically scaled.}
+decides whether the image is automatically scaled.}
 }
 \description{
 Simple wrapper of \code{magick::image_resize}.

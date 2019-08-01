@@ -27,8 +27,9 @@ Note: "radian = degree * pi / 180". Its length can be
 larger than 1.
 The rotation direction is anti-clockwise.}
 
-\item{xytype}{should be one of "middle" (default), 
-"bottomleft", "middleleft". It indicates the type of argument 
+\item{xytype}{should be one of "middle/center" (default), 
+"bottomleft", "middleleft/centerleft/left". 
+It indicates the type of argument 
 of the middle point of an shape. If it is "middleleft", x and 
 y are the middle-left coordinates before rotation. If it is 
 "bottomleft", x and y are the coordinates of the 

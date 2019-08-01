@@ -6,10 +6,10 @@
 \usage{
 annotation_transparent_text(label, xmin, xmax, ymin, ymax, bg = "black",
   alpha = 0.5, interpolate = TRUE, result_interpolate = TRUE,
-  expand = c(0.08, 0.08), family = "SimHei", fontface = 1,
-  reflow = FALSE, place = "center", bg_trim = NULL,
-  result = c("layer", "magick"), width = 800, height = NULL,
-  res = 72)
+  expand = c(0.05, 0.05), family = "SimHei", fontface = 1,
+  reflow = FALSE, place = "center", label_trim = NULL,
+  bg_trim = NULL, result = c("layer", "magick"), width = 800,
+  height = NULL, res = 72, ...)
 }
 \arguments{
 \item{label}{the text.}
@@ -44,11 +44,14 @@ in the final result. Default is TRUE.}
 \item{expand}{sometimes 
 it is needed to slightly expand the x position and 
 y position to put the text so that they can be 
-shown. It should be two values used by x and y
-respectively. Default is 0.08 and 0.08.}
+shown nicely. 
+It should be two values used by x and y
+respectively. Default is 0.05 and 0.05.}
 
 \item{family}{family of text. Default is SimHei 
-which ensures that Chinese texts can be shown.}
+which ensures that Chinese texts can be shown.
+However, you can change it to others, 
+e. g., sans, serif, mono.}
 
 \item{fontface}{fontface.}
 
@@ -57,7 +60,17 @@ automatically. It will be passed to
 \code{ggfittext::geom_fit_text}. Default is FALSE.}
 
 \item{place}{position adjustment used by 
-\code{ggfittext:;geom_fit_text}.}
+\code{ggfittext:;geom_fit_text}.
+The value is one of "center", "middle" (= "center"), 
+"topleft", "top", "topright", "right", "bottomright", 
+"bottom", "bottomleft", "left".}
+
+\item{label_trim}{whether to trim \code{label}. 
+The default is NULL which means no trimming. 
+But if you want to remove all edges around label, 
+you should give \code{label_trim} a value which will 
+be passed to \code{magick::image_trim}. However, 
+most of the time you do not need this parameter.}
 
 \item{bg_trim}{whether to trim \code{bg}. Most 
 of the time we do want to trim it. However, the 
@@ -71,18 +84,23 @@ used as a ggplot layer. When it is "magick", the result
 is only an image which is created by the magick package.}
 
 \item{width}{the width of 
-the text rectange. It will be passed 
+the text rectangle. It will be passed 
 to \code{magick::image_graph}. Most of the time you do 
 not need to modify this. Default is 800.}
 
 \item{height}{the height of the 
-text rectange. It will be passed 
-to \code{magick::image_graph}. Most of the time you do 
-not need to modify this. Default is NULL, which means 
-it will be computed automatically.}
+text rectangle. It will be passed 
+to \code{magick::image_graph}. 
+Default is NULL, which means 
+it will be computed automatically. DO SEE Details below 
+to learn how to handle this parameter.}
 
 \item{res}{resolution in pixels which will be passed 
 to \code{magick::image_graph}. Default is 72.}
+
+\item{...}{arguments which will be passed to 
+\code{ggfittex::geom_fit_text}. Most often used are 
+\code{angle} (0 to 360), \code{lineheight}.}
 }
 \description{
 Suppose there is a colored rectangle
@@ -96,6 +114,36 @@ used as a layer, it uses
 \code{ggplot2::annotation_raster} to 
 do the drawing, so you must 
 set limits for the x axis and the y axis. See examples.
+}
+\details{
+\code{height} can be used in the 
+following ways: 
+\itemize{
+  \item (1) an integer which will be 
+directly passed to \code{image::graph}.
+  \item (2) a character-like integer, 
+e.g., \code{height = "0.5"}. Suppose \code{width = 400}, 
+the height that will be used is 400*0.5 = 200. 
+This effectively prevents the image from becoming 
+too large.
+  \item (3) \code{height = "coord_fixed"}. 
+the ratio between height and width will 
+be (ymax-ymin)/(xmax-xmin).
+  \item (4) \code{height = "image"}. the width and height 
+will be the width and height of raster when raster is 
+a magick object.
+  \item (5) \code{height = NULL}, the default. 
+Now height is computed automatically. 
+If \code{bg} is a magick object, the width 
+and height of the image will be used. 
+If \code{bg} is not a magick object, 
+a ratio is computed first,  
+ratio = (ymax-ymin)/(xmax-xmin). if the ratio is larger 
+than 5 or smaller than 0.2, then height will be 
+width*5 or width*0.2; else, the height will be treated 
+in the same way as in (3) above. All these works 
+are needed to prevent the image from becoming too large.
+}
 }
 \examples{
 \donttest{
@@ -130,13 +178,24 @@ tt=annotation_transparent_text(
 m=colorRampPalette(c("yellow", "purple"))(10)
 ggplot()+coord_fixed(expand=FALSE)+
 	theme(panel.background=element_rect(fill="red"))+
-	xlim(0, 9)+
-	ylim(0, 5)+
 	annotation_transparent_text(
 		label="hehehaha", 
 		xmin=1, xmax=8, 
 		ymin=1, ymax=4, 
 		bg=m, alpha=1
 	)
+#
+# Example 4, height is too large.
+# Now you should explicitly set 
+# width and height, otherwise, the 
+# characters will become too flat.
+x=c(0, 5, 10)
+y=c(0, 500, 1000)
+ggplot()+ylim(0, 4000)+
+	geom_point(aes(x, y))+
+	annotation_transparent_text(label="ha ha\\nhe he", 
+		xmin=0, xmax=10, ymin=1000, ymax=4000, bg="black", 
+		width=300, height=150
+	) # do not set height=NULL here
 }
 }

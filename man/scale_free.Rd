@@ -4,7 +4,8 @@
 \alias{scale_free}
 \title{Scale values into a Certain Location}
 \usage{
-scale_free(x, left = 0, right = 1, reverse = FALSE)
+scale_free(x, left = 0, right = 1, reverse = FALSE, xmin = NULL,
+  xmax = NULL, na.rm = FALSE)
 }
 \arguments{
 \item{x}{a numeric vector or a numeric matrix, 
@@ -28,6 +29,22 @@ If \code{x} has n columns, then \code{reverse}
  is expected to 
 be of length n. However, if it is shorter, it will be 
 repeated to reach that length.}
+
+\item{xmin}{the min value. Default is NULL, 
+which means use the min value of \code{x}. However, 
+sometimes the min value of \code{x} may not be the 
+true min value. Suppose the two scores of a 
+100-point test are 59, 87, then the true min score is 0 
+and the true max score is 100. Thus you must 
+add \code{xmin = 0, xmax = 100}. 
+If \code{reverse = TRUE} (that is, 0 is better than 100), 
+also add \code{xmin = 0, xmax = 100}.}
+
+\item{xmax}{the same meaning as \code{xmin}, 
+but for max value.}
+
+\item{na.rm}{used by \code{min} and \code{max}. 
+Default is FALSE.}
 }
 \description{
 A simple function to put numeric values into 

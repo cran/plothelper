@@ -44,7 +44,8 @@
 ANYxy=function(myfun=NULL, ..., MoreArgs=NULL, group=TRUE, todf=TRUE){ 
 	stopifnot(group %in% c(TRUE, FALSE))
 	stopifnot(todf %in% c(TRUE, FALSE))
-	if (is.null(myfun)) myfun=HEARTXY
+	if (is.null(myfun) || identical (myfun, "HEART")) myfun=HEARTXY
+	if (identical(myfun, "RADAR")) myfun=RADARXY
 	stopifnot(is.function(myfun))
 	if (! is.null(MoreArgs)) stopifnot(is.list(MoreArgs))
 	FINAL=mapply(FUN=myfun, ..., MoreArgs=MoreArgs, SIMPLIFY=FALSE)
@@ -63,3 +64,14 @@ HEARTXY=function(x, y, r=1, n=30, p1=13, p2=5, p3=2, p4=1){
 	ycurve=((p1*r)*cos(t) - (p2*r)*cos(2*t) - (p3*r)*cos(3*t) - p4*r*cos(4*t))/16
 	data.frame(x=xcurve+x, y=ycurve+y)
  }
+
+ RADARXY=function(r, x=0, y=0, theta=NULL){
+	if (is.null(theta)) theta=seq(pi/2, (-3*pi/2)+(2*pi)/length(r), length.out=length(r))
+	# if multiple drawing, r should be a list of vectors, 
+	# even when the list has 
+	# only one vector. So does theta.
+	# The length of each vector in r 
+	# should be the same as that of the corresponding vector in theta
+	xy=data.frame(x=r*cos(theta)+x, y=r*sin(theta)+y)
+}
+ 
