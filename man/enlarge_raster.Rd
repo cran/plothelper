@@ -4,7 +4,7 @@
 \alias{enlarge_raster}
 \title{Enlarge a Color Matrix}
 \usage{
-enlarge_raster(x, n = c(10, 10), row_first = TRUE)
+enlarge_raster(x, n = c(10, 10), row_first = TRUE, space = "rgb")
 }
 \arguments{
 \item{x}{a color matrix or raster. It should
@@ -18,6 +18,10 @@ row and per column. Default is \code{c(10, 10)}.}
 \item{row_first}{enlarge rows first or enlarge columns 
 first? Default is TRUE. The results are almost the same, 
 so you do not need to change this.}
+
+\item{space}{the \code{space} 
+parameter used by \code{colorRampPalette}. It can be 
+"rgb" (default) or "Lab".}
 }
 \description{
 This is a convenient wrapper of 
@@ -32,7 +36,7 @@ m=matrix(c(
 	"blue", "purple", "cyan", 
 	"black", "orange", "grey"), byrow=TRUE, nrow=3)
 # enlarge the matrix
-mm=enlarge_raster(m, c(15, 15))
+mm=enlarge_raster(m, c(15, 15), space="Lab")
 ggplot()+xlim(0, 10)+ylim(0, 5)+coord_fixed()+
 	annotation_raster(mm, 
 		xmin=0, xmax=10, ymin=0, ymax=5, interpolate=TRUE)

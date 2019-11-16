@@ -340,7 +340,10 @@ annotation_shading_polygon=function(shape=data.frame(c(-1, 1, 0), c(0, 0, 1.732)
 	} else {
 		list(
 			ggplot2::geom_blank(ggplot2::aes(x=c(xmin, xmax), y=c(ymin, ymax))), 
-			ggplot2::annotation_raster(raster=comp, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, interpolate=result_interpolate)
+			# ggplot2::annotation_raster(raster=comp, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, interpolate=result_interpolate)
+			# When using annotation_raster here, geom_text may fail combined with annotation_raster. So here use 
+			# geom_multi_raster instead.
+			geom_multi_raster(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, raster=list(grDevices::as.raster(comp))), interpolate=result_interpolate)
 		)
 	}
 }

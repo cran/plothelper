@@ -25,6 +25,10 @@
 #' @param alpha it is only used 
 #' when \code{bg} is a character 
 #' vector. Default is 0.5.
+#' @param operator the argument used by 
+#' \code{magick::image_composite}. It should be 
+#' "out" (default) or "in". The former makes the texts 
+#' transparent, the latter creates shading texts.
 #' @param interpolate when \code{bg} is 
 #' a matrix, a image or 
 #' a raster, this parameter is used and 
@@ -87,7 +91,7 @@
 #' following ways: 
 #' \itemize{
 #'   \item (1) an integer which will be 
-#' directly passed to \code{image::graph}.
+#' directly passed to \code{magick::image_graph}.
 #'   \item (2) a character-like integer, 
 #' e.g., \code{height = "0.5"}. Suppose \code{width = 400}, 
 #' the height that will be used is 400*0.5 = 200. 
@@ -167,7 +171,7 @@
 #' 		width=300, height=150
 #' 	) # do not set height=NULL here
 #' }
-annotation_transparent_text=function(label, xmin, xmax, ymin, ymax, bg="black", alpha=0.5, interpolate=TRUE, result_interpolate=TRUE, expand=c(0.05, 0.05), family="SimHei", fontface=1, reflow=FALSE, place="center", label_trim=NULL, bg_trim=NULL, result=c("layer", "magick"), width=800, height=NULL, res=72, ...){
+annotation_transparent_text=function(label, xmin, xmax, ymin, ymax, bg="black", alpha=0.5, operator="out", interpolate=TRUE, result_interpolate=TRUE, expand=c(0.05, 0.05), family="SimHei", fontface=1, reflow=FALSE, place="center", label_trim=NULL, bg_trim=NULL, result=c("layer", "magick"), width=800, height=NULL, res=72, ...){
 	
 	result=result[1]
 	stopifnot(result %in% c("layer", "magick"))
@@ -272,14 +276,14 @@ annotation_transparent_text=function(label, xmin, xmax, ymin, ymax, bg="black", 
 	}
 	
 	# composite
-	# comp=magick::image_trim(image_composite(img_tegg, img_bggg, "out", "+0+0"))
-	comp=magick::image_composite(img_tegg, img_bggg, "out", "+0+0") # DO NOT TRIM
+	comp=magick::image_composite(img_tegg, img_bggg, operator=operator, offset="+0+0") # DO NOT TRIM # out
 	if (result == "magick"){
 		comp
 	} else {
 		list(
 			ggplot2::geom_blank(ggplot2::aes(x=c(xmin, xmax), y=c(ymin, ymax))), 
-			ggplot2::annotation_raster(raster=comp, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, interpolate=result_interpolate)
+			# ggplot2::annotation_raster(raster=comp, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, interpolate=result_interpolate)
+			geom_multi_raster(aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, raster=list(grDevices::as.raster(comp))), interpolate=result_interpolate)
 		)
 	}
 }

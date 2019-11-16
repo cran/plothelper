@@ -13,6 +13,9 @@
 #' @param row_first enlarge rows first or enlarge columns 
 #' first? Default is TRUE. The results are almost the same, 
 #' so you do not need to change this.
+#' @param space the \code{space} 
+#' parameter used by \code{colorRampPalette}. It can be 
+#' "rgb" (default) or "Lab".
 #' 
 #' @export
 #' @examples
@@ -23,11 +26,11 @@
 #' 	"blue", "purple", "cyan", 
 #' 	"black", "orange", "grey"), byrow=TRUE, nrow=3)
 #' # enlarge the matrix
-#' mm=enlarge_raster(m, c(15, 15))
+#' mm=enlarge_raster(m, c(15, 15), space="Lab")
 #' ggplot()+xlim(0, 10)+ylim(0, 5)+coord_fixed()+
 #' 	annotation_raster(mm, 
 #' 		xmin=0, xmax=10, ymin=0, ymax=5, interpolate=TRUE)
-enlarge_raster=function(x, n=c(10, 10), row_first=TRUE){
+enlarge_raster=function(x, n=c(10, 10), row_first=TRUE, space="rgb"){
 	cla=class(x)[1]
 	stopifnot(cla %in% c("matrix", "raster"))
 	if (cla == "raster") x=as.matrix(x)
@@ -35,13 +38,13 @@ enlarge_raster=function(x, n=c(10, 10), row_first=TRUE){
 	if (anyNA(x)) stop("x must have no NAs.")
 	if (length(n) == 1) n=rep(n, 2)
 	if (row_first==TRUE){
-		y=t(apply(x, 1, ENLARGE_COLOR_VECTOR, N=n[1]))
-		y=apply(y, 2, ENLARGE_COLOR_VECTOR, N=n[2])
+		y=t(apply(x, 1, ENLARGE_COLOR_VECTOR, N=n[1], SPACE=space))
+		y=apply(y, 2, ENLARGE_COLOR_VECTOR, N=n[2], SPACE=space)
 	} else {
-		y=apply(x, 2, ENLARGE_COLOR_VECTOR, N=n[2])		
-		y=t(apply(y, 1, ENLARGE_COLOR_VECTOR, N=n[1]))
+		y=apply(x, 2, ENLARGE_COLOR_VECTOR, N=n[2], SPACE=space)		
+		y=t(apply(y, 1, ENLARGE_COLOR_VECTOR, N=n[1], SPACE=space))
 	}
 	y
 }
 
-ENLARGE_COLOR_VECTOR=function(X, N=10) if (length(X) < N) grDevices::colorRampPalette(X)(N) else X	
+ENLARGE_COLOR_VECTOR=function(X, N=10, SPACE) if (length(X) < N) grDevices::colorRampPalette(X, space=SPACE)(N) else X	

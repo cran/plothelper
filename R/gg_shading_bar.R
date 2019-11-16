@@ -54,6 +54,9 @@
 #' will be smoothed using the value of \code{smooth}. 
 #' If \code{raster} has enough colors, you can set 
 #' this to FALSE.
+#' @param space the \code{space} parameter used by 
+#' \code{colorRampPalette}. It should be 
+#' "rgb" (default) or "Lab".
 #' @param ... additional arguments used by 
 #' \code{ggplot2::coord_flip} when \code{flip = TRUE}.
 #' 
@@ -89,7 +92,7 @@
 #' #' between red and green
 #' gg_shading_bar(c(3, 5), raster=c("green", "red"), 
 #' 	equal_scale=TRUE)
-gg_shading_bar=function(v, labels=NULL, raster=NULL, flip=FALSE, change_order="normal", equal_scale=FALSE, smooth=15, interpolate=TRUE, width=0.8, color=NA, linetype=1, size=1, modify_raster=TRUE, ...){
+gg_shading_bar=function(v, labels=NULL, raster=NULL, flip=FALSE, change_order="normal", equal_scale=FALSE, smooth=15, interpolate=TRUE, width=0.8, color=NA, linetype=1, size=1, modify_raster=TRUE, space="rgb", ...){
     nlen=length(v)
 	if (nlen==0) stop("v must not be of length 0.")
     if (! is.numeric(v)) stop("v must be numeric.")	
@@ -121,7 +124,7 @@ gg_shading_bar=function(v, labels=NULL, raster=NULL, flip=FALSE, change_order="n
     }
     
 	if (modify_raster==TRUE){
-		raster=transform_raster_list(x=raster, smooth=smooth, equal_scale=equal_scale, raw_data=v)
+		raster=transform_raster_list(x=raster, smooth=smooth, equal_scale=equal_scale, raw_data=v, SPACE=space)
     }
 	
     if (change_order=="rev"){
@@ -164,8 +167,8 @@ gg_shading_bar=function(v, labels=NULL, raster=NULL, flip=FALSE, change_order="n
 	}
 }
 
-transform_raster_list=function(x, smooth=30, equal_scale=FALSE, raw_data=NULL){
-    newx=plyr::llply(x, .fun=function(xx, smooth) if (length(xx)>=smooth ) xx else grDevices::colorRampPalette(xx)(smooth), smooth=smooth)
+transform_raster_list=function(x, smooth=30, equal_scale=FALSE, raw_data=NULL, SPACE="rgb"){
+    newx=plyr::llply(x, .fun=function(xx, smooth) if (length(xx)>=smooth ) xx else grDevices::colorRampPalette(xx, space=SPACE)(smooth), smooth=smooth)
     if (equal_scale==FALSE){
         newx
     } else {

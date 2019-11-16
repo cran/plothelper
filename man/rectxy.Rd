@@ -37,7 +37,7 @@ bottom-left corner.}
 
 \item{group}{default is TRUE. It indicates 
 whether to add a 3rd column named 
-"d" to label the group number of each group of points. It is useful 
+"g" to label the group number of each group of points. It is useful 
 when using \code{aes(...group=g)} with 'ggplot2'.}
 
 \item{todf}{default is TRUE. It indicates whether to 

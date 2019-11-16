@@ -7,7 +7,7 @@
 gg_shading_bar(v, labels = NULL, raster = NULL, flip = FALSE,
   change_order = "normal", equal_scale = FALSE, smooth = 15,
   interpolate = TRUE, width = 0.8, color = NA, linetype = 1,
-  size = 1, modify_raster = TRUE, ...)
+  size = 1, modify_raster = TRUE, space = "rgb", ...)
 }
 \arguments{
 \item{v}{a vector of item frequencies.
@@ -70,6 +70,10 @@ of the bars.}
 will be smoothed using the value of \code{smooth}. 
 If \code{raster} has enough colors, you can set 
 this to FALSE.}
+
+\item{space}{the \code{space} parameter used by 
+\code{colorRampPalette}. It should be 
+"rgb" (default) or "Lab".}
 
 \item{...}{additional arguments used by 
 \code{ggplot2::coord_flip} when \code{flip = TRUE}.}

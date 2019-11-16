@@ -3,7 +3,7 @@
 #' Simple function to show colors. NOTE: 
 #' do not add \code{coord_flip()}.
 #'
-#' @param x a chacracter vector of colors.
+#' @param x a character vector of colors.
 #' @param label_size size of text on 
 #' x-axis to show color names.
 #' @param ... other arguments passed to 

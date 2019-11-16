@@ -5,11 +5,12 @@
 \title{Layer for Transparent Text}
 \usage{
 annotation_transparent_text(label, xmin, xmax, ymin, ymax, bg = "black",
-  alpha = 0.5, interpolate = TRUE, result_interpolate = TRUE,
-  expand = c(0.05, 0.05), family = "SimHei", fontface = 1,
-  reflow = FALSE, place = "center", label_trim = NULL,
-  bg_trim = NULL, result = c("layer", "magick"), width = 800,
-  height = NULL, res = 72, ...)
+  alpha = 0.5, operator = "out", interpolate = TRUE,
+  result_interpolate = TRUE, expand = c(0.05, 0.05),
+  family = "SimHei", fontface = 1, reflow = FALSE,
+  place = "center", label_trim = NULL, bg_trim = NULL,
+  result = c("layer", "magick"), width = 800, height = NULL,
+  res = 72, ...)
 }
 \arguments{
 \item{label}{the text.}
@@ -31,6 +32,11 @@ Default is color black.}
 \item{alpha}{it is only used 
 when \code{bg} is a character 
 vector. Default is 0.5.}
+
+\item{operator}{the argument used by 
+\code{magick::image_composite}. It should be 
+"out" (default) or "in". The former makes the texts 
+transparent, the latter creates shading texts.}
 
 \item{interpolate}{when \code{bg} is 
 a matrix, a image or 
@@ -120,7 +126,7 @@ set limits for the x axis and the y axis. See examples.
 following ways: 
 \itemize{
   \item (1) an integer which will be 
-directly passed to \code{image::graph}.
+directly passed to \code{magick::image_graph}.
   \item (2) a character-like integer, 
 e.g., \code{height = "0.5"}. Suppose \code{width = 400}, 
 the height that will be used is 400*0.5 = 200. 

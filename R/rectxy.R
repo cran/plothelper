@@ -27,7 +27,7 @@
 #' bottom-left corner.
 #' @param group default is TRUE. It indicates 
 #' whether to add a 3rd column named 
-#' "d" to label the group number of each group of points. It is useful 
+#' "g" to label the group number of each group of points. It is useful 
 #' when using \code{aes(...group=g)} with 'ggplot2'.
 #' @param todf default is TRUE. It indicates whether to 
 #' combine the output (a list) into a data frame.

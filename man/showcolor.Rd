@@ -7,7 +7,7 @@
 showcolor(x, label_size = 15, ...)
 }
 \arguments{
-\item{x}{a chacracter vector of colors.}
+\item{x}{a character vector of colors.}
 
 \item{label_size}{size of text on 
 x-axis to show color names.}
