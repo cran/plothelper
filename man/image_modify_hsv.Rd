@@ -33,7 +33,7 @@ be 0.6, and the largest, 0.95. Alternatively,
 it can be your own scaling function.}
 
 \item{fun_h}{your own modifying function 
-(e. g., \code{fun_h = sqrt}. Alternatively, it can 
+(e. g., \code{fun_h = sqrt}). Alternatively, it can 
 be a list that designats how to use internal 
 curves. See Details.}
 
@@ -78,7 +78,7 @@ The ways to modify include: setting values
 to some specified values (set_*), adding (add_*), 
 multiplying the original values (mult_*), 
 rescaling the original values (rescale_*), 
-using a function to recompute values. 
+using a function to recompute values (fun_*). 
 The most useful way is to use some internal 
 curves that mimic those PS-like apps.
 DO see Details.

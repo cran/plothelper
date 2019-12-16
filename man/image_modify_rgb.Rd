@@ -32,7 +32,7 @@ be 180, and the largest, 240. Alternatively,
 it can be your own scaling function.}
 
 \item{fun_r}{your own modifying function 
-(e. g., \code{fun_r = sqrt}. Alternatively, it can 
+(e. g., \code{fun_r = sqrt}). Alternatively, it can 
 be a list that designats how to use internal 
 curves. See \code{\link{image_modify_hsv}}.}
 
@@ -77,7 +77,7 @@ The ways to modify include: setting values
 to some specified values (set_*), adding (add_*), 
 multiplying the original values (mult_*), 
 rescaling the original values (rescale_*), 
-using a function to recompute values. 
+using a function to recompute values (fun_*). 
 The most useful way is to use some internal 
 curves that mimic those PS-like apps.
 }

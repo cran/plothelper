@@ -1,8 +1,9 @@
 chEck_rAw_df=function(x, must_matrix=FALSE, must_df=TRUE, column_num=2, must_numeric=FALSE, no_na=TRUE){
-	if (class(x)[1]=="tbl_df") x=as.data.frame(x)
-	if (class(x)[1]=="matrix" & must_df==TRUE) x=data.frame(x, stringsAsFactors=FALSE)
-	if (class(x)[1]=="data.frame" & must_matrix==TRUE) x=as.matrix(x)
-	if (! class(x)[1] %in%  c("matrix", "data.frame")) stop("The input must be of class data.frame or matrix or tbl_df.")
+	cla=class(x)[1]
+	if (cla=="tbl_df") x=as.data.frame(x)
+	if (cla=="matrix" & must_df==TRUE) x=data.frame(x, stringsAsFactors=FALSE)
+	if (cla=="data.frame" & must_matrix==TRUE) x=as.matrix(x)
+	if (! cla %in%  c("matrix", "data.frame")) stop("The input must be of class data.frame or matrix or tbl_df.")
 	if (nrow(x) == 0 ) stop("The input must have at least 1 row.")
 	if (! is.null(column_num)){
 		if (ncol(x) != column_num) stop("Column number of the input must be: ", column_num, ".")

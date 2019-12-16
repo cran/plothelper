@@ -14,7 +14,9 @@ image_keep_color(x, color = NULL, fuzz = 10, alpha = FALSE,
 other functions in package magick.}
 
 \item{color}{a vector of one or more colors that will 
-be kept unchanged.}
+be kept unchanged. If it is "click", you can click 
+on the image for 1 or more times to decide which 
+colors should be kept.}
 
 \item{fuzz}{a number between 0 and 100 (default is 
 10). Suppose you want the red color to be kept

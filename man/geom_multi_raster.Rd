@@ -48,10 +48,16 @@ Accepted properties are:
   \item (2) \code{xmax}.
   \item (3) \code{ymin}.
   \item (4) \code{ymax}.
-  \item (5) \code{raster}. Each raster should be 
+  \item (5) \code{raster}. a list with 1 or more 
+rasters. If you have only 1 raster, you also 
+have to put it into a list. 
+Each raster should be 
 a matrix, a raster object, a character vector 
 or a magick object read into R by 
 \code{magick::image_read}. 
+You can also use a data frame created by 
+package tibble to combine
+\code{xmin, xmax, ymin, ymax, raster}.
   \item (6) \code{interpolate}. It is the same 
 as that in \code{annotation_raster} except 
 that the default value is TRUE. It can be 
@@ -79,15 +85,7 @@ ggplot()+
 	geom_multi_raster(aes(xmin=xmin, xmax=xmax, 
 	ymin=ymin, ymax=ymax, raster=mycolor))
 #
-# Example 2: you can also use a tibble 
-# data frame, that is, put them together 
-# by tibble::tibble.
-# tib=tibble::tibble(xmin, xmax, ymin, ymax, mycolor)
-# ggplot(tib)+
-#		geom_multi_raster(aes(xmin=xmin, xmax=xmax, 
-#		ymin=ymin, ymax=ymax, raster=mycolor))
-#
-# Example 3: the same as example 1
+# Example 2: the same as example 1
 # except flip=TRUE.
 ggplot()+coord_flip()+
 	geom_multi_raster(aes(xmin=xmin, xmax=xmax, 

@@ -11,7 +11,9 @@
 #' \code{magick::image_read} or 
 #' other functions in package magick.  
 #' @param color a vector of one or more colors that will 
-#' be kept unchanged.
+#' be kept unchanged. If it is "click", you can click 
+#' on the image for 1 or more times to decide which 
+#' colors should be kept.
 #' @param fuzz a number between 0 and 100 (default is 
 #' 10). Suppose you want the red color to be kept
 #' unchanged and set fuzz to 0, then what remain is 

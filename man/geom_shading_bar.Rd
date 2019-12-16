@@ -60,8 +60,17 @@ in \code{geom_multi_raster} and
 \code{geom_bar}.
   \item (2) \code{y}. It is the same as that in 
 \code{geom_bar}.
-  \item (3) \code{raster}. Each raster should 
- only be a character vector of colors. 
+  \item (3) \code{raster}. It should be 
+a list with 1 or more character vectors of 
+colors. If the list only has 1 vector, 
+all the bars will use the same shading pattern. 
+If you 
+have, for example, 5 bars to draw, then you 
+have to put 5 vectors of colors into a list.
+If you use a data frame, it must be a 
+data frame made by package tibble, and 
+the column for \code{raster} should be 
+a list.
   \item (4) \code{width}. It is the same 
 as that in \code{geom_bar}.
   \item (5) \code{flip}. The default is FALSE. 
@@ -101,14 +110,7 @@ raster=list(c("blue", "red"), c("green", "orange"),
 ggplot()+
 	geom_shading_bar(aes(x=x, y=y, raster=raster), smooth=40)
 #
-# Example 2: you can put the vectors
-# together by tibble::tibble. 
-# and a list. Also, flipped.
-# tib=tibble::tibble(x, y, raster)
-# ggplot(tib)+coord_flip()+
-#	geom_shading_bar(aes(x=tib$x, y=tib$y, 
-#		raster=tib$raster), smooth=40, flip=TRUE)
-# Example 3: other parmeters
+# Example 2: other parameters
 x=1: 5
 y=c(1, 2, -3, 5, 4)
 raster=list(c("blue", "red"))
