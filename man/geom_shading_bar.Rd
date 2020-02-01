@@ -4,11 +4,22 @@
 \alias{geom_shading_bar}
 \title{Geom Layer for Drawing Shading Barplot}
 \usage{
-geom_shading_bar(mapping = NULL, data = NULL, stat = "identity",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, width = 0.9, flip = FALSE,
-  modify_raster = TRUE, smooth = 15, equal_scale = FALSE,
-  space = "rgb", ...)
+geom_shading_bar(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  width = 0.9,
+  flip = FALSE,
+  modify_raster = TRUE,
+  smooth = 15,
+  equal_scale = FALSE,
+  space = "rgb",
+  ...
+)
 }
 \arguments{
 \item{mapping}{aes mapping.}

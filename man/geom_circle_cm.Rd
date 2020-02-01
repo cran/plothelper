@@ -4,9 +4,17 @@
 \alias{geom_circle_cm}
 \title{Geom Layer for Circle with Absolute Size}
 \usage{
-geom_circle_cm(mapping = NULL, data = NULL, stat = "identity",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, linetype = NULL, ...)
+geom_circle_cm(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  linetype = NULL,
+  ...
+)
 }
 \arguments{
 \item{mapping}{aes mapping.}

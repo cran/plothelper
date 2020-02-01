@@ -6,12 +6,23 @@
 Irregular Polygon 
 with Shading Colors}
 \usage{
-annotation_shading_polygon(shape = data.frame(c(-1, 1, 0), c(0, 0,
-  1.732)), xmin = NULL, xmax = NULL, ymin = NULL, ymax = NULL,
-  raster = NULL, interpolate = TRUE, result_interpolate = TRUE,
-  shape_trim = NULL, raster_trim = NULL, result_trim = NULL,
-  result = c("layer", "magick"), width = 800, height = NULL,
-  res = 72)
+annotation_shading_polygon(
+  shape = data.frame(c(-1, 1, 0), c(0, 0, 1.732)),
+  xmin = NULL,
+  xmax = NULL,
+  ymin = NULL,
+  ymax = NULL,
+  raster = NULL,
+  interpolate = TRUE,
+  result_interpolate = TRUE,
+  shape_trim = NULL,
+  raster_trim = NULL,
+  result_trim = NULL,
+  result = c("layer", "magick"),
+  width = 800,
+  height = NULL,
+  res = 72
+)
 }
 \arguments{
 \item{shape}{the polygon can be 

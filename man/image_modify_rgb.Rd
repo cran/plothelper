@@ -4,12 +4,29 @@
 \alias{image_modify_rgb}
 \title{Modify R, G, B Values of an Image}
 \usage{
-image_modify_rgb(x, set_r = NULL, add_r = NULL, mult_r = NULL,
-  rescale_r = NULL, fun_r = NULL, set_g = NULL, add_g = NULL,
-  mult_g = NULL, rescale_g = NULL, fun_g = NULL, set_b = NULL,
-  add_b = NULL, mult_b = NULL, rescale_b = NULL, fun_b = NULL,
-  alpha = FALSE, result = "magick", res = 144, checks = TRUE,
-  warn = FALSE)
+image_modify_rgb(
+  x,
+  set_r = NULL,
+  add_r = NULL,
+  mult_r = NULL,
+  rescale_r = NULL,
+  fun_r = NULL,
+  set_g = NULL,
+  add_g = NULL,
+  mult_g = NULL,
+  rescale_g = NULL,
+  fun_g = NULL,
+  set_b = NULL,
+  add_b = NULL,
+  mult_b = NULL,
+  rescale_b = NULL,
+  fun_b = NULL,
+  alpha = FALSE,
+  result = "magick",
+  res = 144,
+  checks = TRUE,
+  warn = FALSE
+)
 }
 \arguments{
 \item{x}{an image created 
@@ -33,7 +50,7 @@ it can be your own scaling function.}
 
 \item{fun_r}{your own modifying function 
 (e. g., \code{fun_r = sqrt}). Alternatively, it can 
-be a list that designats how to use internal 
+be a list that designates how to use internal 
 curves. See \code{\link{image_modify_hsv}}.}
 
 \item{set_g, add_g, mult_g, rescale_g, fun_g}{parameters 

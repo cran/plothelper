@@ -5,8 +5,16 @@
 \title{Modify R, G, B Values according to 
 V values}
 \usage{
-image_modify_rgb_v(x, fun_r = NULL, fun_g = NULL, fun_b = NULL,
-  alpha = FALSE, rescale_v = NULL, result = "magick", res = 144)
+image_modify_rgb_v(
+  x,
+  fun_r = NULL,
+  fun_g = NULL,
+  fun_b = NULL,
+  alpha = FALSE,
+  rescale_v = NULL,
+  result = "magick",
+  res = 144
+)
 }
 \arguments{
 \item{x}{an image created 
@@ -43,7 +51,7 @@ function modifies R, G, B with reference to
 the original values, 
 \code{image_modify_rgb_v} also takes into 
 account the brightness (V) values. It is similar 
-to those apps which devide an image into 
+to those apps which divide an image into 
 a bright part and a dark part (and, for 
 example, you can increase red in the 
 bright part and decrease red in the 

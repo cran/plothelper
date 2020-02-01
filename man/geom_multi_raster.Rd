@@ -4,9 +4,17 @@
 \alias{geom_multi_raster}
 \title{Geom Layer for Drawing Multiple Rasters}
 \usage{
-geom_multi_raster(mapping = NULL, data = NULL, stat = "identity",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, flip = FALSE, ...)
+geom_multi_raster(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  flip = FALSE,
+  ...
+)
 }
 \arguments{
 \item{mapping}{aes mapping.}

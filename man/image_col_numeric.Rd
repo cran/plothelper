@@ -4,8 +4,14 @@
 \alias{image_col_numeric}
 \title{Colorize an Image according to Gray Scale}
 \usage{
-image_col_numeric(x, palette = c("purple", "yellow"), n = 256,
-  alpha = FALSE, result = "magick", res = 144)
+image_col_numeric(
+  x,
+  palette = c("purple", "yellow"),
+  n = 256,
+  alpha = FALSE,
+  result = "magick",
+  res = 144
+)
 }
 \arguments{
 \item{x}{an image

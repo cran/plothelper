@@ -4,14 +4,26 @@
 \alias{ABCxy}
 \title{Symmetrical Transformation}
 \usage{
-ABCxy(x, A, B, C, p1 = NULL, p2 = NULL, f = NULL, group = TRUE,
-  todf = TRUE, checks = TRUE)
+ABCxy(
+  x,
+  A,
+  B,
+  C,
+  p1 = NULL,
+  p2 = NULL,
+  f = NULL,
+  group = TRUE,
+  todf = TRUE,
+  checks = TRUE
+)
 }
 \arguments{
 \item{x}{the input. It can be a data frame, matrix, tibble object, 
 or a list of 
 these kinds of objects. Each object must have exactly 2 columns 
-and must be numeric without NA.}
+and must be numeric without NA.
+If it has more than 2 columns, only the first 2 columns 
+will be used.}
 
 \item{A}{for Ax+By+C=0.}
 

@@ -4,8 +4,17 @@
 \alias{rectxy}
 \title{Generating Coordinates of Multiple Rectangles}
 \usage{
-rectxy(x = 0, y = 0, a = 1, b = 1, angle = 0,
-  xytype = "middle", group = TRUE, todf = TRUE, checks = TRUE)
+rectxy(
+  x = 0,
+  y = 0,
+  a = 1,
+  b = 1,
+  angle = 0,
+  xytype = "middle",
+  group = TRUE,
+  todf = TRUE,
+  checks = TRUE
+)
 }
 \arguments{
 \item{x}{the x coordinates of relative points. 

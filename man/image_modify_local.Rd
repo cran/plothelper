@@ -4,7 +4,15 @@
 \alias{image_modify_local}
 \title{Modify Only a Subregion of an Image}
 \usage{
-image_modify_local(x, FUN, geometry = "click", local = "local", ...)
+image_modify_local(
+  x,
+  FUN,
+  geometry = "click",
+  local = "local",
+  rectangle = TRUE,
+  trim = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{an image read into R by 
@@ -37,6 +45,17 @@ modifying other parts. If it is 3 or "subregion",
 the result is only the modified subregion, not the 
 whole image.}
 
+\item{rectangle}{if it is TRUE (default), the 
+subregion is a rectangle. If it is FALSE, 
+the subregion can be an irregular polygon 
+designated by your mouse click.}
+
+\item{trim}{whether to trim the subregion. 
+This is only used when \code{local}
+is 3 or "subregion". It helps remove 
+the transparent parts. See \code{image_crop_click}
+to know how to use this parameter.}
+
 \item{..., }{extra parameters used by 
 \code{FUN}.}
 }
@@ -44,6 +63,8 @@ whole image.}
 The function allows you to modify a subregion  
 of your image (or, the opposite, keep the 
 subregion unchanged while modifying other parts).
-You can set the four sides of the subregion by 
-mouse click.
+You can set the four sides of the subregion 
+or an irregular polygon by 
+mouse click. If it is irregular, you MUST 
+click in order.
 }

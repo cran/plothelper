@@ -35,7 +35,7 @@
 #' it can be your own scaling function.
 #' @param fun_r your own modifying function 
 #' (e. g., \code{fun_r = sqrt}). Alternatively, it can 
-#' be a list that designats how to use internal 
+#' be a list that designates how to use internal 
 #' curves. See \code{\link{image_modify_hsv}}.
 #' @param set_g,add_g,mult_g,rescale_g,fun_g parameters 
 #' to change G values. Used in the same way as those 

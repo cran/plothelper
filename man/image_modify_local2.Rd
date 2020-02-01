@@ -5,7 +5,7 @@
 \title{Modify both a Subregion  and the Whole
 of an Image}
 \usage{
-image_modify_local2(x, FUN1, FUN2 = NULL, geometry = "click")
+image_modify_local2(x, FUN1, FUN2 = NULL, geometry = "click", rectangle = TRUE)
 }
 \arguments{
 \item{x}{an image read into R by 
@@ -34,6 +34,13 @@ function \code{image_crop_click} for how to
 use mouse click). Otherwise, you can use 
 a length 4 vector with the exact order: left, 
 right, top, bottom.}
+
+\item{rectangle}{if it is TRUE (default), 
+the subregion is a rectangle area. If 
+it is FALSE, the subregion is 
+an irregular polygon area, and, now 
+\code{geometry} is ignored, you must 
+designate the area by mouse click.}
 }
 \description{
 The function is similar to 

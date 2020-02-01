@@ -32,21 +32,44 @@
 #' use mouse click). Otherwise, you can use 
 #' a length 4 vector with the exact order: left, 
 #' right, top, bottom. 
+#' @param rectangle if it is TRUE (default), 
+#' the subregion is a rectangle area. If 
+#' it is FALSE, the subregion is 
+#' an irregular polygon area, and, now 
+#' \code{geometry} is ignored, you must 
+#' designate the area by mouse click. 
 #' 
 #' @export
-image_modify_local2=function(x, FUN1, FUN2=NULL, geometry="click"){
+image_modify_local2=function(x, FUN1, FUN2=NULL, geometry="click", rectangle=TRUE){
 	stopifnot(is.function(FUN1))
 	if (is.null(FUN2)) FUN2=function(x) x
 	stopifnot(is.function(FUN2))
 	myfun1=match.fun(FUN1)
 	myfun2=match.fun(FUN2)
+	stopifnot(rectangle %in% c(TRUE, FALSE))
+	
+	if (rectangle==TRUE){
+		Y=IMAGE_MODIFY_LOCAL2_RECT(x=x, FUN1=myfun1, FUN2=myfun2, geometry=geometry)
+	} else {
+		Y=IMAGE_MODIFY_LOCAL2_FREE(x=x, FUN1=myfun1, FUN2=myfun2)
+	}
+	
+	Y
+}
+	
+IMAGE_MODIFY_LOCAL2_RECT=function(x, FUN1, FUN2, geometry="click"){
 	if (identical(geometry, "click")){
-		POS=image_crop_click(x, only_value=TRUE)
+		POS=image_crop_click(x=x, only_value=TRUE)
 	} else {
 		if (length(geometry) != 4 || geometry[2]-geometry[1] <= 0 || geometry[4]-geometry[3] <= 0) stop("geometry must be either click or a integer vector of length 4 with the excact order of left, right, top, bottom.")
 		POS=geometry
 	}
 	cha=paste(POS[2]-POS[1]+1, "x", POS[4]-POS[3]+1, "+", POS[1]-1, "+", POS[3]-1, sep="")
 	small=magick::image_crop(x, geometry=cha)
-	magick::image_composite(myfun2(x), myfun1(small), operator="atop", offset=paste("+", POS[1]-1, "+", POS[3]-1, sep=""))
+	magick::image_composite(FUN2(x), FUN1(small), operator="atop", offset=paste("+", POS[1]-1, "+", POS[3]-1, sep=""))
+}
+
+IMAGE_MODIFY_LOCAL2_FREE=function(x, FUN1, FUN2){
+	small=image_crop_click(x=x, rectangle=FALSE, trim=FALSE)
+	magick::image_composite(FUN2(x), FUN1(small), operator="atop")
 }

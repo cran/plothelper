@@ -10,6 +10,8 @@
 #' or a list of 
 #' these kinds of objects. Each object must have exactly 2 columns 
 #' and must be numeric without NA.
+#' If it has more than 2 columns, only the first 2 columns 
+#' will be used.
 #' @param xlarge the enlarging extent in x dimension.
 #' If it is smaller than 1, the shape will be shrinking.
 #' @param ylarge the enlarging extent in y dimension.

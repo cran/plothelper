@@ -4,9 +4,19 @@
 \alias{textgif}
 \title{Simple Text ".gif" File}
 \usage{
-textgif(text, text_color = NULL, bg_color = NULL, reflow = FALSE,
-  width = 200, height = 100, family = "SimHei", fontface = 1,
-  fps = 2, output = NULL, ...)
+textgif(
+  text,
+  text_color = NULL,
+  bg_color = NULL,
+  reflow = FALSE,
+  width = 200,
+  height = 100,
+  family = "SimHei",
+  fontface = 1,
+  fps = 2,
+  output = NULL,
+  ...
+)
 }
 \arguments{
 \item{text}{must be a character vector.}

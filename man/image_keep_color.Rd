@@ -5,8 +5,15 @@
 \title{Keep Several Colors Unchanged 
 and Make Other Parts Gray}
 \usage{
-image_keep_color(x, color = NULL, fuzz = 10, alpha = FALSE,
-  weight = c(0.299, 0.587, 0.114), result = "magick", res = 144)
+image_keep_color(
+  x,
+  color = NULL,
+  fuzz = 10,
+  alpha = FALSE,
+  weight = c(0.299, 0.587, 0.114),
+  result = "magick",
+  res = 144
+)
 }
 \arguments{
 \item{x}{an image created by 

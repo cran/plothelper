@@ -4,8 +4,14 @@
 \alias{spathxy}
 \title{Reordering Points to Form a "s" Shape}
 \usage{
-spathxy(x, y, first = "right", second = "top", change_line = FALSE,
-  stringsAsFactors = TRUE)
+spathxy(
+  x,
+  y,
+  first = "right",
+  second = "top",
+  change_line = FALSE,
+  stringsAsFactors = TRUE
+)
 }
 \arguments{
 \item{x}{a vector of values to be paired with y.}

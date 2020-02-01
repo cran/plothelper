@@ -4,10 +4,23 @@
 \alias{gg_shading_bar}
 \title{Drawing Barplot with Shading Colors}
 \usage{
-gg_shading_bar(v, labels = NULL, raster = NULL, flip = FALSE,
-  change_order = "normal", equal_scale = FALSE, smooth = 15,
-  interpolate = TRUE, width = 0.8, color = NA, linetype = 1,
-  size = 1, modify_raster = TRUE, space = "rgb", ...)
+gg_shading_bar(
+  v,
+  labels = NULL,
+  raster = NULL,
+  flip = FALSE,
+  change_order = "normal",
+  equal_scale = FALSE,
+  smooth = 15,
+  interpolate = TRUE,
+  width = 0.8,
+  color = NA,
+  linetype = 1,
+  size = 1,
+  modify_raster = TRUE,
+  space = "rgb",
+  ...
+)
 }
 \arguments{
 \item{v}{a vector of item frequencies.

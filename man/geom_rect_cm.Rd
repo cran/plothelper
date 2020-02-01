@@ -4,9 +4,16 @@
 \alias{geom_rect_cm}
 \title{Geom Layer for Rectangle with Absolute Size}
 \usage{
-geom_rect_cm(mapping = NULL, data = NULL, stat = "identity",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, ...)
+geom_rect_cm(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+)
 }
 \arguments{
 \item{mapping}{aes mapping.}

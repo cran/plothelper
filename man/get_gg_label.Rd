@@ -4,8 +4,15 @@
 \alias{get_gg_label}
 \title{Checking Min, Max, Labels and Label Positions}
 \usage{
-get_gg_label(a = NULL, b = NULL, v = NULL, gg = NULL,
-  mult = 0.05, add = 0, axis = "y")
+get_gg_label(
+  a = NULL,
+  b = NULL,
+  v = NULL,
+  gg = NULL,
+  mult = 0.05,
+  add = 0,
+  axis = "y"
+)
 }
 \arguments{
 \item{a}{extreme values of a numeric vector. Note: only 

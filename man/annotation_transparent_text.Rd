@@ -4,13 +4,30 @@
 \alias{annotation_transparent_text}
 \title{Layer for Transparent Text}
 \usage{
-annotation_transparent_text(label, xmin, xmax, ymin, ymax, bg = "black",
-  alpha = 0.5, operator = "out", interpolate = TRUE,
-  result_interpolate = TRUE, expand = c(0.05, 0.05),
-  family = "SimHei", fontface = 1, reflow = FALSE,
-  place = "center", label_trim = NULL, bg_trim = NULL,
-  result = c("layer", "magick"), width = 800, height = NULL,
-  res = 72, ...)
+annotation_transparent_text(
+  label,
+  xmin,
+  xmax,
+  ymin,
+  ymax,
+  bg = "black",
+  alpha = 0.5,
+  operator = "out",
+  interpolate = TRUE,
+  result_interpolate = TRUE,
+  expand = c(0.05, 0.05),
+  family = "SimHei",
+  fontface = 1,
+  reflow = FALSE,
+  place = "center",
+  label_trim = NULL,
+  bg_trim = NULL,
+  result = c("layer", "magick"),
+  width = 800,
+  height = NULL,
+  res = 72,
+  ...
+)
 }
 \arguments{
 \item{label}{the text.}
@@ -136,8 +153,8 @@ too large.
 the ratio between height and width will 
 be (ymax-ymin)/(xmax-xmin).
   \item (4) \code{height = "image"}. the width and height 
-will be the width and height of raster when raster is 
-a magick object.
+will be the width and height of \code{bg} when 
+the latter is a magick object.
   \item (5) \code{height = NULL}, the default. 
 Now height is computed automatically. 
 If \code{bg} is a magick object, the width 
@@ -164,7 +181,7 @@ ggplot()+coord_fixed()+
 		interpolate=TRUE
 	)+
 	annotation_transparent_text(
-		label="R\\nDATA\\nVISUALIZATION", 
+		label="R\nDATA\nVISUALIZATION", 
 		xmin=0, xmax=7, 
 		ymin=-1, ymax=3, 
 		family="sans", fontface=2, alpha=0.8, 
@@ -199,7 +216,7 @@ x=c(0, 5, 10)
 y=c(0, 500, 1000)
 ggplot()+ylim(0, 4000)+
 	geom_point(aes(x, y))+
-	annotation_transparent_text(label="ha ha\\nhe he", 
+	annotation_transparent_text(label="ha ha\nhe he", 
 		xmin=0, xmax=10, ymin=1000, ymax=4000, bg="black", 
 		width=300, height=150
 	) # do not set height=NULL here

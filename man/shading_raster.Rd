@@ -4,8 +4,14 @@
 \alias{shading_raster}
 \title{Create a Shading Raster with a Palette}
 \usage{
-shading_raster(nr = NULL, nc = NULL, middle = NULL,
-  palette = c("blue", "red"), mat = NULL, FUN = NULL)
+shading_raster(
+  nr = NULL,
+  nc = NULL,
+  middle = NULL,
+  palette = c("blue", "red"),
+  mat = NULL,
+  FUN = NULL
+)
 }
 \arguments{
 \item{nr}{method 1 to use 

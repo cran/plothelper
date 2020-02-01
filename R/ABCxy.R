@@ -11,6 +11,8 @@
 #' or a list of 
 #' these kinds of objects. Each object must have exactly 2 columns 
 #' and must be numeric without NA.
+#' If it has more than 2 columns, only the first 2 columns 
+#' will be used.
 #' @param A for Ax+By+C=0.
 #' @param B for Ax+By+C=0.
 #' @param C for Ax+By+C=0.

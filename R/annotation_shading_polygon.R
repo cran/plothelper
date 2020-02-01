@@ -198,7 +198,7 @@ annotation_shading_polygon=function(shape=data.frame(c(-1, 1, 0), c(0, 0, 1.732)
 			}
 		}
 
-		img_shape=magick::image_graph(width=width, height=	shape_adj_height, bg="transparent", res=res, clip=FALSE)
+		img_shape=magick::image_graph(width=width, height=shape_adj_height, bg="transparent", res=res, clip=FALSE)
 		print(myshape)
 		grDevices::dev.off()
 		if (! is.null(shape_trim)) img_shape=magick::image_trim(img_shape, fuzz=shape_trim)	

@@ -4,8 +4,15 @@
 \alias{sunshinexy}
 \title{Generating Lines Which Link One Points to Many}
 \usage{
-sunshinexy(x = 0, y = 0, outer = data.frame(1, 1), n = 10,
-  delete_n = 0, distance = FALSE, checks = TRUE)
+sunshinexy(
+  x = 0,
+  y = 0,
+  outer = data.frame(1, 1),
+  n = 10,
+  delete_n = 0,
+  distance = FALSE,
+  checks = TRUE
+)
 }
 \arguments{
 \item{x}{the x coordinate of the middle points. 

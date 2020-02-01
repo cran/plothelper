@@ -4,9 +4,21 @@
 \alias{ellipsexy}
 \title{Generating Coordinates of Multiple Ellipses or Circles}
 \usage{
-ellipsexy(x = 0, y = 0, a = 2, b = 1, start = 0,
-  end = 6.283185, angle = 0, n = 40, xytype = "middle",
-  fan = FALSE, group = TRUE, todf = TRUE, checks = TRUE)
+ellipsexy(
+  x = 0,
+  y = 0,
+  a = 2,
+  b = 1,
+  start = 0,
+  end = 6.283185,
+  angle = 0,
+  n = 40,
+  xytype = "middle",
+  fan = FALSE,
+  group = TRUE,
+  todf = TRUE,
+  checks = TRUE
+)
 }
 \arguments{
 \item{x}{the x coordinates of relative points. 

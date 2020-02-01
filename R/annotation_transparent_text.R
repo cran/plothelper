@@ -101,8 +101,8 @@
 #' the ratio between height and width will 
 #' be (ymax-ymin)/(xmax-xmin).
 #'   \item (4) \code{height = "image"}. the width and height 
-#' will be the width and height of raster when raster is 
-#' a magick object.
+#' will be the width and height of \code{bg} when 
+#' the latter is a magick object.
 #'   \item (5) \code{height = NULL}, the default. 
 #' Now height is computed automatically. 
 #' If \code{bg} is a magick object, the width 

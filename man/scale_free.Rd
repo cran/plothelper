@@ -4,8 +4,15 @@
 \alias{scale_free}
 \title{Scale values into a Certain Location}
 \usage{
-scale_free(x, left = 0, right = 1, reverse = FALSE, xmin = NULL,
-  xmax = NULL, na.rm = FALSE)
+scale_free(
+  x,
+  left = 0,
+  right = 1,
+  reverse = FALSE,
+  xmin = NULL,
+  xmax = NULL,
+  na.rm = FALSE
+)
 }
 \arguments{
 \item{x}{a numeric vector or a numeric matrix, 

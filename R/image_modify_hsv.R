@@ -23,11 +23,11 @@
 #' specified by you to be in the range [0, 1] for 
 #' H, S, V modification and [0, 255] for R, G, B
 #' modification. Also, you'd better make sure 
-#' the output values of the funtion are in 
+#' the output values of the function are in 
 # [0, 1] for H, S, V and [0, 255] for R, G, B.
 #'  
 #' When \code{fun_*} is a list, it should be written in the 
-#' fowllowing way: 
+#' following way: 
 #' \itemize{
 #'   \item (1) \code{fun_* = list(fun = "s", c1 = -2, 
 #' c2 = 2, domain = c(0, 1))} An "s" curve will be 
@@ -80,7 +80,7 @@
 #' it can be your own scaling function.
 #' @param fun_h your own modifying function 
 #' (e. g., \code{fun_h = sqrt}). Alternatively, it can 
-#' be a list that designats how to use internal 
+#' be a list that designates how to use internal 
 #' curves. See Details.
 #' @param set_s,add_s,mult_s,rescale_s,fun_s parameters 
 #' to change S values. Used in the same way as those 
