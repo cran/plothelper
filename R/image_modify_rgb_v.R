@@ -57,21 +57,12 @@ image_modify_rgb_v=function(x, fun_r=NULL, fun_g=NULL, fun_b=NULL,
 	ncpic=ncol(x)
 	x=as.character(x)
 	
-	y=grDevices::col2rgb(x, alpha=alpha)
-	vv=grDevices::rgb2hsv(y[1: 3, , drop=FALSE])[3, ]
+	vv=farver::get_channel(x, channel="v", space="hsv")/360
 	if (!is.null(rescale_v)) vv=RESCALE_FUN_VEC(vv, para=rescale_v)
-	
-	print_range=stats::quantile(vv, probs=c(0, 0.25, 0.5, 0.75, 1))
-	cat("The original v are:\n")
-	print(print_range)
 	
 	## change r
 	if ( ! is.null(fun_r)){
-		rr=y[1, ]
-		
-		print_range=stats::quantile(rr, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original r are:\n")
-		print(print_range)
+		rr=farver::get_channel(x, channel="r", space="rgb")
 
 		if (is.function(fun_r)){
 			rr=rr*(1+(match.fun(fun_r)(vv)-vv))
@@ -79,20 +70,13 @@ image_modify_rgb_v=function(x, fun_r=NULL, fun_g=NULL, fun_b=NULL,
 			rr=rr*(1+(USE_INTERNAL_CURVE(vv, LIST=fun_r, cat_text=NULL)-vv))
 		}
 	
-		rr=as.integer(rr)
-		rr[rr > 255]=255
-		rr[rr < 0]=0
-		y[1, ]=rr
+		x=farver::set_channel(x, channel="r", value=rr, space="rgb")
 		rr=NULL
 	}
 
 	## change g	
 	if ( ! is.null(fun_g)){
-		gg=y[2, ]
-		
-		print_range=stats::quantile(gg, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original g are:\n")
-		print(print_range)
+		gg=farver::get_channel(x, channel="g", space="rgb")
 
 		if (is.function(fun_g)){
 			gg=gg*(1+(match.fun(fun_g)(vv)-vv))
@@ -100,20 +84,13 @@ image_modify_rgb_v=function(x, fun_r=NULL, fun_g=NULL, fun_b=NULL,
 			gg=gg*(1+(USE_INTERNAL_CURVE(vv, LIST=fun_g, cat_text=NULL)-vv))
 		}
 	
-		gg=as.integer(gg)
-		gg[gg > 255]=255
-		gg[gg < 0]=0
-		y[2, ]=gg
+		x=farver::set_channel(x, channel="g", value=gg, space="rgb")
 		gg=NULL
 	}
 
 	## change b	
 	if ( ! is.null(fun_b)){
-		bb=y[3, ]
-		
-		print_range=stats::quantile(bb, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original b are:\n")
-		print(print_range)
+		bb=farver::get_channel(x, channel="b", space="rgb")
 
 		if (is.function(fun_b)){
 			bb=bb*(1+(match.fun(fun_b)(vv)-vv))
@@ -121,27 +98,16 @@ image_modify_rgb_v=function(x, fun_r=NULL, fun_g=NULL, fun_b=NULL,
 			bb=bb*(1+(USE_INTERNAL_CURVE(vv, LIST=fun_b, cat_text=NULL)-vv))
 		}
 	
-		bb=as.integer(bb)
-		bb[bb > 255]=255
-		bb[bb < 0]=0
-		y[3, ]=bb
+		x=farver::set_channel(x, channel="b", value=bb, space="rgb")
 		bb=NULL
 	}
 	
-	if (alpha==FALSE){
-		y=apply(y, 2, FUN=function(xx) grDevices::rgb(xx[1], xx[2], xx[3], maxColorValue=255))
-	} else {
-		y=apply(y, 2, FUN=function(xx) grDevices::rgb(xx[1], xx[2], xx[3], alpha=xx[4], maxColorValue=255))
-	}
-
-	if ( (is.null(fun_r)) + (is.null(fun_g)) + (is.null(fun_b)) != 3) cat("Attention: when using internal curves, the function believes you have scaled r, g or b values into [0, 255] and does not check this.\n")
-	
-	y=matrix(y, nrow=nrpic, byrow=TRUE)
+	x=matrix(x, nrow=nrpic, byrow=TRUE)
 	if (result=="raster"){
-		return(y)
+		return(x)
 	} else {
 		canv=magick::image_graph(width=ncpic, height=nrpic, bg="transparent", res=res, clip=FALSE)
-		grid::grid.raster(image=y, width=1, height=1)
+		grid::grid.raster(image=x, width=1, height=1)
 		grDevices::dev.off()
 		return(canv)
 	}

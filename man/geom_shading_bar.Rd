@@ -18,6 +18,7 @@ geom_shading_bar(
   smooth = 15,
   equal_scale = FALSE,
   space = "rgb",
+  orientation = "x",
   ...
 )
 }
@@ -53,6 +54,8 @@ or \code{gg_shading_bar}.}
 or \code{gg_shading_bar}.}
 
 \item{space}{see description.}
+
+\item{orientation}{see description.}
 
 \item{...}{additional parameters.}
 }
@@ -105,6 +108,15 @@ shading colors each bar has. The bigger, the better.
 It is the same as that in \code{gg_shading_bar}.
   \item (9) \code{space}. The color space that is 
 used. It can be "rgb" (default) or "Lab".
+  \item (10) \code{orientation}. This parameter 
+mimics the same parameter used in 
+\code{geom_bar}, though acts differently. 
+This enables to flip the x axis and y axis without 
+using \code{coord_flip}. If it is NA or "x" (default), 
+it supposes x = SOME LABELS and y = SOME VALUES. 
+If it is "y", you must set x = SOME VALUES and 
+y = SOME LABELS. These effects are the same as 
+\code{geom_bar}.
 }
 NOTE: the function does interpolation as default, so  
 you does not need to 

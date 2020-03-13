@@ -45,5 +45,8 @@ A color image can be converted to one with
 different degrees of gray. Then, colors in a 
 palette can be added according to the gray 
 degrees. The function is a simple wrapper 
-of \code{scales::col_numeric}.
+of \code{scales::col_numeric}. The pixels 
+which are deliberately assigned 
+"transparent" in the original magick image will 
+always kept unchanged.
 }

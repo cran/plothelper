@@ -4,7 +4,10 @@
 #' different degrees of gray. Then, colors in a 
 #' palette can be added according to the gray 
 #' degrees. The function is a simple wrapper 
-#' of \code{scales::col_numeric}.
+#' of \code{scales::col_numeric}. The pixels 
+#' which are deliberately assigned 
+#' "transparent" in the original magick image will 
+#' always kept unchanged.
 #'
 #' @param x  an image
 #' read into R by \code{magick::image_read}.
@@ -28,30 +31,25 @@
 #' \code{magick::image_graph}. The default is 144.
 #' 
 #' @export
+#' @import farver
 image_col_numeric=function(x, palette=c("purple", "yellow"), n=256, alpha=FALSE, result="magick", res=144){
 	stopifnot(result %in% c("magick", "raster"))
 	# palette must not have alpha
 	palette=unlist(lapply(palette, FUN=function(x) if (grepl("#", x)) substr(x, start=1, stop=7) else x))
 	cla=class(x)[1]
-	if (! grepl("magick", cla)) stop("x must be a picture read into R by magick::image_read.")
+	if (! grepl("magick", cla)) stop("x must be an image read into R by magick::image_read.")
 	x=magick::image_quantize(x, max=n, colorspace="gray")
 	width=magick::image_info(x)
 	height=as.numeric(width[1, 3])
 	width=as.numeric(width[1, 2])
 	cha=as.character(grDevices::as.raster(x))
-	pos=which(cha=="transparent")
-	if (length(pos)>0) cha[pos]="#ffffff00"
-	cha1=cha[1]
-	alpha=if (alpha==TRUE & nchar(cha1)==9) TRUE else FALSE
-	if (alpha==TRUE) alp=substr(cha, start=8, stop=9)
-	cha=strtoi(substr(cha, start=2, stop=3), base=16)
-	cha=scales::col_numeric(palette, domain=range(cha))(cha)
-	if (alpha==TRUE){
-		cha=paste0(cha, alp, sep="")
-		if (length(pos)>0){
-			cha[pos]="transparent"
-		}
-	}
+	
+	alp=farver::get_channel(cha, channel="alpha")
+	cha=farver::get_channel(cha, channel="r")
+	cha=scales::col_numeric(palette, domain=range(cha, na.rm=TRUE), na.color=NA)(cha)
+	if (alpha==TRUE) cha=farver::set_channel(cha, channel="alpha", value=alp)
+	cha[which(is.na(cha))]="transparent"
+
 	cha=matrix(cha, nrow=height, byrow=TRUE)
 	if (result=="raster"){
 		return(cha)

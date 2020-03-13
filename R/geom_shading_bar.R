@@ -48,6 +48,15 @@
 #' It is the same as that in \code{gg_shading_bar}.
 #'   \item (9) \code{space}. The color space that is 
 #' used. It can be "rgb" (default) or "Lab".
+#'   \item (10) \code{orientation}. This parameter 
+#' mimics the same parameter used in 
+#' \code{geom_bar}, though acts differently. 
+#' This enables to flip the x axis and y axis without 
+#' using \code{coord_flip}. If it is NA or "x" (default), 
+#' it supposes x = SOME LABELS and y = SOME VALUES. 
+#' If it is "y", you must set x = SOME VALUES and 
+#' y = SOME LABELS. These effects are the same as 
+#' \code{geom_bar}.
 #' }
 #' NOTE: the function does interpolation as default, so  
 #' you does not need to 
@@ -74,6 +83,7 @@
 #' @param equal_scale see description
 #' or \code{gg_shading_bar}.
 #' @param space see description.
+#' @param orientation see description.
 #' @param ... additional parameters.
 #' 
 #' @export
@@ -103,6 +113,7 @@ geom_shading_bar=function(mapping=NULL, data=NULL,
 					 smooth=15, 
 					 equal_scale=FALSE, 
 					 space="rgb", 
+					 orientation="x", 
                      ...) {
   ggplot2::layer(
     data=data,
@@ -120,6 +131,7 @@ geom_shading_bar=function(mapping=NULL, data=NULL,
 	  equal_scale=equal_scale, 
 	  space=space, 
       na.rm=na.rm,
+	  orientation=orientation, 
       ...
     )
   )
@@ -138,18 +150,34 @@ GeomShadingBar=ggplot2::ggproto("GeomShadingBar", GeomMultiRaster,
 		modify_raster=params$modify_raster
 		smooth=params$smooth
 		equal_scale=params$equal_scale 
-		raw_data=if (equal_scale == TRUE ) data$y else NULL
 		space=params$space
+		
+		orientation=params$orientation # added 2020-03-08
+		if (is.na(orientation)) orientation="x"
+		if (orientation != "x"){
+			flip=TRUE
+			raw_data=if (equal_scale == TRUE ) data$x else NULL
+		} else {
+			raw_data=if (equal_scale == TRUE ) data$y else NULL
+		}
+			
 		data$raster=if (modify_raster==TRUE) transform_raster_list(data$raster, smooth=smooth, equal_scale=equal_scale, raw_data=raw_data, SPACE=space) else data$raster
 		data$raster=if (flip==FALSE) lapply(data$raster, FUN=function(x) grDevices::as.raster(rev(x))) else lapply(data$raster, FUN=function(x) matrix(x, nrow=1))
 		
-		transform(data,
-			ymin=pmin(y, 0), ymax=pmax(y, 0),
-			xmin=x-width/2, xmax=x+width/2
-		)
+		if (orientation=="x"){
+			transform(data,
+				ymin=pmin(y, 0), ymax=pmax(y, 0),
+				xmin=x-width/2, xmax=x+width/2
+			)
+		} else {
+			transform(data,
+				ymin=y-width/2, ymax=y+width/2,
+				xmin=pmin(x, 0), xmax=pmax(x, 0)
+			)
+		}
 	},
 
-	draw_panel = function(self, data, panel_params, coord, width = 0.9, flip=FALSE, modify_raster=TRUE, smooth=15, equal_scale=FALSE, space="rgb") {
+	draw_panel = function(self, data, panel_params, coord, width = 0.9, flip=FALSE, modify_raster=TRUE, smooth=15, equal_scale=FALSE, space="rgb", orientation="x") {
 		ggplot2::ggproto_parent(GeomMultiRaster, self)$draw_panel(data, panel_params, coord)
 	}
 )

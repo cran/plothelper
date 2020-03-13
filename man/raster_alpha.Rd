@@ -5,7 +5,7 @@
 \title{Combine a Matrix of Colors and 
 a Matrix of Alpha Values}
 \usage{
-raster_alpha(color, alpha)
+raster_alpha(color, alpha, result = "raster", res = 144)
 }
 \arguments{
 \item{color}{a matrix of colors, a 
@@ -16,6 +16,15 @@ raster or an image read into R by
 or a matrix of alpha values. The matrix 
 should have the same numbers of rows 
 and columns as \code{color}.}
+
+\item{result}{if it is "raster", the result will 
+be a matrix which can be used by
+\code{annotation_raster} (default), if it is 
+"magick", the result is a magick image.}
+
+\item{res}{the \code{res} parameter used 
+by \code{magick::image_graph} when \code{result}
+is "magick". Default is 144.}
 }
 \description{
 The function is a wrapper of 

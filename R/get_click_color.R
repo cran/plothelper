@@ -23,6 +23,7 @@ get_click_color=function(x){
 	height=dim(x)[1]
 	graphics::plot(x)
 	clicking=graphics::locator()
+	if (is.null(clicking)) stop("When choosing colors, you must click at least 1 time.")
 	posxy=cbind(height+1-ceiling(clicking$y), ceiling(clicking$x)) # y and then x, NOT the opposite
 	GETXIJ=function(X, MAT) MAT[X[1], X[2]]
 	apply(posxy, 1, FUN=GETXIJ, MAT=x)

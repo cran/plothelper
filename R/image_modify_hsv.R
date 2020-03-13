@@ -1,7 +1,7 @@
 #' Modify the H, S, V Values of a 
 #' Color Vector or an Image
 #' 
-#' The function modifies the H, S, V values 
+#' The function modifies the H (0 - 1), S, V values 
 #' of a vector of colors or an image. The 
 #' three channels can be modified separately.
 #' However, the most frequently used is 
@@ -88,8 +88,6 @@
 #' @param set_v,add_v,mult_v,rescale_v,fun_v parameters 
 #' to change V values. Used in the same way as those 
 #' for H. See above.
-#' @param alpha whether to allow 
-#' the output colors have transparency. Default is FALSE.
 #' @param result the default is "magick", the output is 
 #' a magick picture. When it is "raster", a matrix is created 
 #' which can be use as a raster 
@@ -97,15 +95,6 @@
 #' @param res when the result is a magick picture, the 
 #' \code{res} parameter used by \code{magick::image_graph}.
 #' Default is 144.
-#' @param checks when modifications are done, whether 
-#' to check the output values. The default is TRUE which 
-#' means whether the computed H, S and V values are 
-#' in the [0, 1] range will be checked, and, those > 1 will 
-#' be set to 1 and those < 0 will be set to 0 automatically. 
-#' However, you can turn off these checks and (FALSE).
-#' @param warn when \code{checks = TRUE}, whether 
-#' to create a warning when values > 1 or < 0 are found 
-#' and coerced to [0, 1].
 #' 
 #' @export
 #' @examples
@@ -128,10 +117,11 @@ image_modify_hsv=function(x,
 	set_h=NULL, add_h=NULL, mult_h=NULL, rescale_h=NULL, fun_h=NULL, 
 	set_s=NULL, add_s=NULL, mult_s=NULL, rescale_s=NULL, fun_s=NULL, 
 	set_v=NULL, add_v=NULL, mult_v=NULL, rescale_v=NULL, fun_v=NULL, 	
-	alpha=FALSE, result="magick", res=144, checks=TRUE, warn=FALSE){
+	result="magick", res=144){
 	
 	stopifnot(result %in% c("magick", "raster"))
 	it_is_pic=FALSE
+	# In fact x can be a color vector. But this is not encouraged, so the manual does not mention it.
 	if (grepl("magick", class(x)[1])){
 		it_is_pic=TRUE
 		x=as.raster(x)
@@ -139,126 +129,94 @@ image_modify_hsv=function(x,
 		ncpic=ncol(x)
 		x=as.character(x)
 	}
-	
-	y=grDevices::col2rgb(x, alpha=alpha)
-	if (alpha==TRUE) alp_store=y[4, ]/255
-	y=grDevices::rgb2hsv(y[1: 3, , drop=FALSE])
-	nc=ncol(y)
-	
+	napos=which(x=="transparent")
+
 	## change h
-	if ( (is.null(set_h))+(is.null(add_h))+(is.null(mult_h))+(is.null(rescale_h))+(is.null(fun_h)) != 5){
-		hh=y[1, ]
-		
-		print_range=stats::quantile(hh, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original h are:\n")
-		print(print_range)
-		
-		if (!is.null(set_h)) hh=rep_len(set_h, nc)
-		if (!is.null(add_h)) hh=hh+add_h
-		if (!is.null(mult_h)) hh=hh*mult_h
-		if (!is.null(rescale_h)) hh=RESCALE_FUN_VEC(hh, para=rescale_h)
-		if (!is.null(fun_h)) hh=if (is.function(fun_h)) match.fun(fun_h)(hh) 
-			else if (is.list(fun_h)) USE_INTERNAL_CURVE(hh, LIST=fun_h, cat_text=NULL)
-		
-		if (checks==TRUE){
-			which_h_big=which(hh>1)
-			which_h_small=which(hh<0)
-			if (length(which_h_big)>0){
-				hh[which_h_big]=1
-				if (warn==TRUE) warning("Some adjusted h values are larger than 1 and are set to 1.")
-			}
-			if (length(which_h_small)>0){
-				hh[which_h_small]=0
-				if (warn==TRUE) warning("Some adjusted h values are smaller than 0 and are set to 0.")
-			}
+	if ((is.null(set_h))+(is.null(add_h))+(is.null(mult_h))+(is.null(rescale_h))+(is.null(fun_h)) != 5){
+		if (!is.null(set_h)) x=farver::set_channel(x, channel="h", value=360*set_h, space="hsv")
+		if (!is.null(add_h)) x=farver::add_to_channel(x, channel="h", value=360*add_h, space="hsv")
+		if (!is.null(mult_h)) x=multiply_channel(x, channel="h", value=mult_h, space = "hsv")
+		if (!is.null(rescale_h)){
+			x=farver::set_channel(
+				x, channel="h", 
+				value=360*RESCALE_FUN_VEC(X=farver::get_channel(x, channel="h", space="hsv")/360, para=rescale_h), 
+				space="hsv"
+			)
 		}
 		
-		y[1, ]=hh
-		hh=NULL
+		if (!is.null(fun_h)){
+			hh=farver::get_channel(x, channel="h", space="hsv")/360
+			if (is.function(fun_h)){
+				hh=match.fun(fun_h)(hh) 
+			} else if (is.list(fun_h)){
+				hh=USE_INTERNAL_CURVE(hh, LIST=fun_h, cat_text=NULL)
+			}
+			x=farver::set_channel(x, channel="h", value=hh*360, space="hsv")
+			hh=NULL
+		}
 	}
-
+	
 	## change s	
 	if ( (is.null(set_s))+(is.null(add_s))+(is.null(mult_s))+(is.null(rescale_s))+(is.null(fun_s)) != 5){
-		ss=y[2, ]
-		
-		print_range=stats::quantile(ss, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original s are:\n")
-		print(print_range)
-		
-		if (!is.null(set_s)) ss=rep_len(set_s, nc)
-		if (!is.null(add_s)) ss=ss+add_s
-		if (!is.null(mult_s)) ss=ss*mult_s
-		if (!is.null(rescale_s)) ss=RESCALE_FUN_VEC(ss, para=rescale_s)
-		if (!is.null(fun_s)) ss=if (is.function(fun_s)) match.fun(fun_s)(ss) 
-			else if (is.list(fun_s)) USE_INTERNAL_CURVE(ss, LIST=fun_s, cat_text=NULL)
-		
-		if (checks==TRUE){
-			which_s_big=which(ss>1)
-			which_s_small=which(ss<0)
-			if (length(which_s_big)>0){
-				ss[which_s_big]=1
-				if (warn==TRUE) warning("Some adjusted s values are larger than 1 and are set to 1.")
-			}
-			if (length(which_s_small)>0){
-				ss[which_s_small]=0
-				if (warn==TRUE) warning("Some adjusted s values are smaller than 0 and are set to 0.")
-			}
+		if (!is.null(set_s)) x=farver::set_channel(x, channel="s", value=set_s, space = "hsv")
+		if (!is.null(add_s)) x=farver::add_to_channel(x, channel="s", value=add_s, space = "hsv")
+		if (!is.null(mult_s)) x=multiply_channel(x, channel="s", value=mult_s, space = "hsv")
+		if (!is.null(rescale_s)){
+			x=farver::set_channel(
+				x, channel="s", 
+				value=RESCALE_FUN_VEC(farver::get_channel(x, channel="s", space="hsv"), para=rescale_s), 
+				space="hsv"
+			)
 		}
 		
-		y[2, ]=ss
-		ss=NULL
+		if (!is.null(fun_s)){
+			ss=farver::get_channel(x, channel="s", space="hsv")
+			if (is.function(fun_s)){
+				ss=match.fun(fun_s)(ss) 
+			} else if (is.list(fun_s)){
+				ss=USE_INTERNAL_CURVE(ss, LIST=fun_s, cat_text=NULL)
+			}
+			x=farver::set_channel(x, channel="s", value=ss, space="hsv")
+			ss=NULL
+		}
 	}
 
 	## change v	
 	if ( (is.null(set_v))+(is.null(add_v))+(is.null(mult_v))+(is.null(rescale_v))+(is.null(fun_v)) != 5){
-		vv=y[3, ]
-		
-		print_range=stats::quantile(vv, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original v are:\n")
-		print(print_range)		
-		
-		if (!is.null(set_v)) vv=rep_len(set_v, nc)
-		if (!is.null(add_v)) vv=vv+add_v
-		if (!is.null(mult_v)) vv=vv*mult_v
-		if (!is.null(rescale_v)) vv=RESCALE_FUN_VEC(vv, para=rescale_v)
-		if (!is.null(fun_v)) vv=if (is.function(fun_v)) match.fun(fun_v)(vv) 
-			else if (is.list(fun_v)) USE_INTERNAL_CURVE(vv, LIST=fun_v, cat_text=NULL)	
-		
-		if (checks==TRUE){
-			which_v_big=which(vv>1)
-			which_v_small=which(vv<0)
-			if (length(which_v_big)>0){
-				vv[which_v_big]=1
-				if (warn==TRUE) warning("Some adjusted v values are larger than 1 and are set to 1.")
-			}
-			if (length(which_v_small)>0){
-				vv[which_v_small]=0
-				if (warn==TRUE) warning("Some adjusted v values are smaller than 0 and are set to 0.")
-			}
+		if (!is.null(set_v)) x=farver::set_channel(x, channel="v", value=set_v, space = "hsv")
+		if (!is.null(add_v)) x=farver::add_to_channel(x, channel="v", value=add_v, space = "hsv")
+		if (!is.null(mult_v)) x=multiply_channel(x, channel="v", value=mult_v, space = "hsv")
+		if (!is.null(rescale_v)){
+			x=farver::set_channel(
+				x, channel="v", 
+				value=RESCALE_FUN_VEC(farver::get_channel(x, channel="v", space="hsv"), para=rescale_v), 
+				space="hsv"
+			)
 		}
 		
-		y[3, ]=vv
-		vv=NULL
+		if (!is.null(fun_v)){
+			vv=farver::get_channel(x, channel="v", space="hsv")
+			if (is.function(fun_v)){
+				vv=match.fun(fun_v)(vv) 
+			} else if (is.list(fun_v)){
+				vv=USE_INTERNAL_CURVE(vv, LIST=fun_v, cat_text=NULL)
+			}
+			x=farver::set_channel(x, channel="v", value=vv, space="hsv")
+			vv=NULL
+		}
 	}
-	
-	if (alpha==FALSE){
-		y=apply(y, 2, FUN=function(xx) grDevices::hsv(xx[1], xx[2], xx[3]))
-	} else {
-		y=rbind(y, alp_store)
-		y=apply(y, 2, FUN=function(xx) grDevices::hsv(xx[1], xx[2], xx[3], alpha=xx[4]))
-	}
-	
-	if ( (is.null(fun_h)) + (is.null(fun_s)) + (is.null(fun_v)) != 3) cat("Attention: when using internal curves, the function believes you have scaled h, s or v values into [0, 1] and does not check this.\n")
+
+	if (length(napos)>0) x[napos]="transparent"
 	
 	if (it_is_pic == FALSE){
-		return(y)
+		return(x)
 	} else {
-		y=matrix(y, nrow=nrpic, byrow=TRUE)
+		x=matrix(x, nrow=nrpic, byrow=TRUE)
 		if (result=="raster"){
-			return(y)
+			return(x)
 		} else {
 			canv=magick::image_graph(width=ncpic, height=nrpic, bg="transparent", res=res, clip=FALSE)
-			grid::grid.raster(image=y, width=1, height=1)
+			grid::grid.raster(image=x, width=1, height=1)
 			grDevices::dev.off()
 			return(canv)
 		}
@@ -306,7 +264,7 @@ USE_INTERNAL_CURVE=function(X, LIST, cat_text=NULL){
 }
 	
 S_CURVE_TRANSFORM=function(X, C1=-2, C2=2, DOMAIN=c(0, 1)){
-	if (identical(DOMAIN, "range")) DOMAIN=range(X)
+	if (identical(DOMAIN, "range")) DOMAIN=range(X, na.rm=TRUE)
 	C1=if (C1==0) 1 else if (C1<0) abs(C1)+1 else 1/(1+C1) 
 	C2=if (C2==0) 1 else if (C2>0) 1+C2 else 1/(1+abs(C2))
 	bigp=which(X>0.5)

@@ -28,8 +28,8 @@ showcolor=function(x, label_size=15, ...){
 	for (i in raw_name) cat(i, "\n")
 	ggplot2::ggplot()+
 		ggplot2::geom_bar(show.legend=FALSE, stat="identity", aes(x=1: lenx, y=rep(1, lenx)), fill=x, ...)+
-		ggplot2::scale_x_continuous(labels=withname_slash_n, breaks=1: lenx, expand=ggplot2::expand_scale(c(0, 0)))+
-		ggplot2::scale_y_continuous(limits=c(0, 1), expand=ggplot2::expand_scale(c(0, 0)))+
+		ggplot2::scale_x_continuous(labels=withname_slash_n, breaks=1: lenx, expand=ggplot2::expansion(c(0, 0)))+
+		ggplot2::scale_y_continuous(limits=c(0, 1), expand=ggplot2::expansion(c(0, 0)))+
 		ggplot2::theme(
 			panel.background=ggplot2::element_blank(), 
 			panel.grid=ggplot2::element_blank(),

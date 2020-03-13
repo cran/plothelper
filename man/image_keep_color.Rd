@@ -2,57 +2,35 @@
 % Please edit documentation in R/image_keep_color.R
 \name{image_keep_color}
 \alias{image_keep_color}
-\title{Keep Several Colors Unchanged 
-and Make Other Parts Gray}
+\title{Keep Some Colors Unchanged and Make 
+Others into Grayscale}
 \usage{
-image_keep_color(
-  x,
-  color = NULL,
-  fuzz = 10,
-  alpha = FALSE,
-  weight = c(0.299, 0.587, 0.114),
-  result = "magick",
-  res = 144
-)
+image_keep_color(x, color = NULL, fuzz = 10, result = "magick")
 }
 \arguments{
-\item{x}{an image created by 
-\code{magick::image_read} or 
-other functions in package magick.}
+\item{x}{an image read into R 
+by \code{magick::image_read}.}
 
-\item{color}{a vector of one or more colors that will 
-be kept unchanged. If it is "click", you can click 
-on the image for 1 or more times to decide which 
-colors should be kept.}
+\item{color}{the same 
+as \code{magick::image_transparent}.
+You can use 1 or more colors.}
 
-\item{fuzz}{a number between 0 and 100 (default is 
-10). Suppose you want the red color to be kept
-unchanged and set fuzz to 0, then what remain is 
-only red. However, if you set it to 10, colors similar 
-to red will also be kept unchanged.}
+\item{fuzz}{the same 
+as \code{magick::image_transparent}. 
+However, Its length must either be 1 or the same 
+as \code{color}.}
 
-\item{alpha}{whether allow the output image 
-has transparency. Default is FALSE.}
-
-\item{weight}{a three number vector deciding 
-the weight of red, green and blue in 
-computing gray color. Default is 
-\code{c(0.299, 0.587, 0.114)}, so for example, 
-red becomes 76, 76, 76 (which is the sum of 
-255 * 0.299 + 0 * 0.587 + 0 * 0.114).}
-
-\item{result}{when it is "magick", the output 
-is a magick image, "raster" for a matrix that can 
-be a raster used for \code{ggplot2::annotation_raster}.}
-
-\item{res}{the \code{res} parameter used by 
-\code{magick::image_graph} when the result is 
-a magick image.}
+\item{result}{if it is "magick" (default), the result is 
+a magick image, if it is "raster", the result is a matrix.}
 }
 \description{
-Suppose you have a picture with a 
-red flower on it. This function keeps 
-the red color unchanged and make 
-other parts of the picture into 
-black-gray-white.
+This function keeps pixels with certain 
+colors unchanged and transforms 
+others into grayscale.
+The function is in fact a wrapper of 
+\code{magick::image_transparent}, so it 
+uses the latter's \code{color} and \code{fuzz}
+parameters. NOTE: the function only works 
+for fully opaque or fully 
+transparent (labelled as "transparent") pixels.
 }

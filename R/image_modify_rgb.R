@@ -43,8 +43,6 @@
 #' @param set_b,add_b,mult_b,rescale_b,fun_b parameters 
 #' to change B values. Used in the same way as those 
 #' for R. See above.
-#' @param alpha whether to allow 
-#' the output colors have transparency. Default is FALSE.
 #' @param result the default is "magick", the output is 
 #' a magick picture. When it is "raster", a matrix is created 
 #' which can be use as a raster 
@@ -52,22 +50,13 @@
 #' @param res when the result is a magick picture, the 
 #' \code{res} parameter used by \code{magick::image_graph}.
 #' Default is 144.
-#' @param checks when modifications are done, whether 
-#' to check the output values. The default is TRUE which 
-#' means whether the computed R, G and B values are 
-#' in the [0, 255] range will be checked, and, those > 255 will 
-#' be set to 255 and those < 0 will be set to 0 automatically. 
-#' However, you can turn off these checks and (FALSE).
-#' @param warn when \code{checks = TRUE}, whether 
-#' to create a warning when values > 255 or < 0 are found 
-#' and coerced to [0, 255].
 #' 
 #' @export
 image_modify_rgb=function(x, 
 	set_r=NULL, add_r=NULL, mult_r=NULL, rescale_r=NULL, fun_r=NULL, 
 	set_g=NULL, add_g=NULL, mult_g=NULL, rescale_g=NULL, fun_g=NULL, 
 	set_b=NULL, add_b=NULL, mult_b=NULL, rescale_b=NULL, fun_b=NULL, 	
-	alpha=FALSE, result="magick", res=144, checks=TRUE, warn=FALSE){
+	result="magick", res=144){
 	
 	stopifnot(result %in% c("magick", "raster"))
 	it_is_pic=FALSE
@@ -79,147 +68,100 @@ image_modify_rgb=function(x,
 		ncpic=ncol(x)
 		x=as.character(x)
 	}
-	
-	y=grDevices::col2rgb(x, alpha=alpha)
-	nc=ncol(y)
-	
+	napos=which(x=="transparent")
+
 	## change r
-	if ( (is.null(set_r))+(is.null(add_r))+(is.null(mult_r))+(is.null(rescale_r))+(is.null(fun_r)) != 5){
-		rr=y[1, ]
+	if ((is.null(set_r))+(is.null(add_r))+(is.null(mult_r))+(is.null(rescale_r))+(is.null(fun_r)) != 5){
+		if (!is.null(set_r)) x=farver::set_channel(x, channel="r", value=set_r, space = "rgb")
+		if (!is.null(add_r)) x=farver::add_to_channel(x, channel="r", value=add_r, space = "rgb")
+		if (!is.null(mult_r)) x=multiply_channel(x, channel="r", value=mult_r, space = "rgb")
+		if (!is.null(rescale_r)){
+			x=farver::set_channel(
+				x, channel="r", 
+				value=RESCALE_FUN_VEC(farver::get_channel(x, channel="r", space="rgb"), para=rescale_r), 
+				space="rgb"
+			)
+		}
 		
-		print_range=stats::quantile(rr, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original r are:\n")
-		print(print_range)
-		
-		if (!is.null(set_r)) rr=rep_len(set_r, nc)
-		if (!is.null(add_r)) rr=rr+add_r
-		if (!is.null(mult_r)) rr=rr*mult_r
-		if (!is.null(rescale_r)) rr=RESCALE_FUN_VEC(rr, para=rescale_r)
 		if (!is.null(fun_r)){
+			rr=farver::get_channel(x, channel="r", space="rgb")
 			if (is.function(fun_r)){
 				rr=match.fun(fun_r)(rr) 
 			} else if (is.list(fun_r)){
-				rr=scales::rescale(c(0, 255, rr), to=c(0, 1))[-c(1, 2)]
+				rr=rr/255
 				rr=USE_INTERNAL_CURVE(rr, LIST=fun_r, cat_text=NULL)
-				rr=scales::rescale(c(0, 1, rr), to=c(0, 255))[-c(1, 2)]
+				rr=rr*255
 			}
+			x=farver::set_channel(x, channel="r", value=rr, space="rgb")
+			rr=NULL
 		}
-		
-		rr=as.integer(rr)
-		if (checks==TRUE){
-			which_r_big=which(rr>255)
-			which_r_small=which(rr<0)
-			if (length(which_r_big)>0){
-				rr[which_r_big]=255
-				if (warn==TRUE) warning("Some adjusted r values are larger than 255 and are set to 255.")
-			}
-			if (length(which_r_small)>0){
-				rr[which_r_small]=0
-				if (warn==TRUE) warning("Some adjusted r values are smaller than 0 and are set to 0.")
-			}
-		}
-		
-		y[1, ]=rr
-		rr=NULL
 	}
 
 	## change g	
 	if ( (is.null(set_g))+(is.null(add_g))+(is.null(mult_g))+(is.null(rescale_g))+(is.null(fun_g)) != 5){
-		gg=y[2, ]
+		if (!is.null(set_g)) x=farver::set_channel(x, channel="g", value=set_g, space = "rgb")
+		if (!is.null(add_g)) x=farver::add_to_channel(x, channel="g", value=add_g, space = "rgb")
+		if (!is.null(mult_g)) x=multiply_channel(x, channel="g", value=mult_g, space = "rgb")
+		if (!is.null(rescale_g)){
+			x=farver::set_channel(
+				x, channel="g", 
+				value=RESCALE_FUN_VEC(farver::get_channel(x, channel="g", space="rgb"), para=rescale_g), 
+				space="rgb"
+			)
+		}
 		
-		print_range=stats::quantile(gg, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original g are:\n")
-		print(print_range)
-		
-		if (!is.null(set_g)) gg=rep_len(set_g, nc)
-		if (!is.null(add_g)) gg=gg+add_g
-		if (!is.null(mult_g)) gg=gg*mult_g
-		if (!is.null(rescale_g)) gg=RESCALE_FUN_VEC(gg, para=rescale_g)
 		if (!is.null(fun_g)){
+			gg=farver::get_channel(x, channel="g", space="rgb")
 			if (is.function(fun_g)){
 				gg=match.fun(fun_g)(gg) 
 			} else if (is.list(fun_g)){
-				gg=scales::rescale(c(0, 255, gg), to=c(0, 1))[-c(1, 2)]
+				gg=gg/255
 				gg=USE_INTERNAL_CURVE(gg, LIST=fun_g, cat_text=NULL)
-				gg=scales::rescale(c(0, 1, gg), to=c(0, 255))[-c(1, 2)]
+				gg=gg*255
 			}
+			x=farver::set_channel(x, channel="g", value=gg, space="rgb")
+			gg=NULL
 		}
-		
-		gg=as.integer(gg)
-		if (checks==TRUE){
-			which_g_big=which(gg>255)
-			which_g_small=which(gg<0)
-			if (length(which_g_big)>0){
-				gg[which_g_big]=255
-				if (warn==TRUE) warning("Some adjusted g values are larger than 255 and are set to 255.")
-			}
-			if (length(which_g_small)>0){
-				gg[which_g_small]=0
-				if (warn==TRUE) warning("Some adjusted g values are smaller than 0 and are set to 0.")
-			}
-		}
-		
-		y[2, ]=gg
-		gg=NULL
 	}
 
 	## change b	
 	if ( (is.null(set_b))+(is.null(add_b))+(is.null(mult_b))+(is.null(rescale_b))+(is.null(fun_b)) != 5){
-		bb=y[3, ]
+		if (!is.null(set_b)) x=farver::set_channel(x, channel="b", value=set_b, space = "rgb")
+		if (!is.null(add_b)) x=farver::add_to_channel(x, channel="b", value=add_b, space = "rgb")
+		if (!is.null(mult_b)) x=multiply_channel(x, channel="b", value=mult_b, space = "rgb")
+		if (!is.null(rescale_b)){
+			x=farver::set_channel(
+				x, channel="b", 
+				value=RESCALE_FUN_VEC(farver::get_channel(x, channel="b", space="rgb"), para=rescale_b), 
+				space="rgb"
+			)
+		}
 		
-		print_range=stats::quantile(bb, probs=c(0, 0.25, 0.5, 0.75, 1))
-		cat("The original b are:\n")
-		print(print_range)		
-		
-		if (!is.null(set_b)) bb=rep_len(set_b, nc)
-		if (!is.null(add_b)) bb=bb+add_b
-		if (!is.null(mult_b)) bb=bb*mult_b
-		if (!is.null(rescale_b)) bb=RESCALE_FUN_VEC(bb, para=rescale_b)
 		if (!is.null(fun_b)){
+			bb=farver::get_channel(x, channel="b", space="rgb")
 			if (is.function(fun_b)){
 				bb=match.fun(fun_b)(bb) 
 			} else if (is.list(fun_b)){
-				bb=scales::rescale(c(0, 255, bb), to=c(0, 1))[-c(1, 2)]
+				bb=bb/255
 				bb=USE_INTERNAL_CURVE(bb, LIST=fun_b, cat_text=NULL)
-				bb=scales::rescale(c(0, 1, bb), to=c(0, 255))[-c(1, 2)]
+				bb=bb*255
 			}
+			x=farver::set_channel(x, channel="b", value=bb, space="rgb")
+			bb=NULL
 		}
-		
-		bb=as.integer(bb)
-		if (checks==TRUE){
-			which_b_big=which(bb>255)
-			which_b_small=which(bb<0)
-			if (length(which_b_big)>0){
-				bb[which_b_big]=255
-				if (warn==TRUE) warning("Some adjusted b values are larger than 255 and are set to 255.")
-			}
-			if (length(which_b_small)>0){
-				bb[which_b_small]=0
-				if (warn==TRUE) warning("Some adjusted b values are smaller than 0 and are set to 0.")
-			}
-		}
-		
-		y[3, ]=bb
-		bb=NULL
-	}
-	
-	if (alpha==FALSE){
-		y=apply(y, 2, FUN=function(xx) grDevices::rgb(xx[1], xx[2], xx[3], maxColorValue=255))
-	} else {
-		y=apply(y, 2, FUN=function(xx) grDevices::rgb(xx[1], xx[2], xx[3], alpha=xx[4], maxColorValue=255))
 	}
 
-	if ( (is.null(fun_r)) + (is.null(fun_g)) + (is.null(fun_b)) != 3) cat("Attention: when using internal curves, the function believes you have scaled r, g or b values into [0, 255] and does not check this.\n")
+	if (length(napos)>0) x[napos]="transparent"
 	
 	if (it_is_pic == FALSE){
-		return(y)
+		return(x)
 	} else {
-		y=matrix(y, nrow=nrpic, byrow=TRUE)
+		x=matrix(x, nrow=nrpic, byrow=TRUE)
 		if (result=="raster"){
-			return(y)
+			return(x)
 		} else {
 			canv=magick::image_graph(width=ncpic, height=nrpic, bg="transparent", res=res, clip=FALSE)
-			grid::grid.raster(image=y, width=1, height=1)
+			grid::grid.raster(image=x, width=1, height=1)
 			grDevices::dev.off()
 			return(canv)
 		}

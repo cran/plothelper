@@ -21,11 +21,8 @@ image_modify_rgb(
   mult_b = NULL,
   rescale_b = NULL,
   fun_b = NULL,
-  alpha = FALSE,
   result = "magick",
-  res = 144,
-  checks = TRUE,
-  warn = FALSE
+  res = 144
 )
 }
 \arguments{
@@ -61,9 +58,6 @@ for R. See above.}
 to change B values. Used in the same way as those 
 for R. See above.}
 
-\item{alpha}{whether to allow 
-the output colors have transparency. Default is FALSE.}
-
 \item{result}{the default is "magick", the output is 
 a magick picture. When it is "raster", a matrix is created 
 which can be use as a raster 
@@ -72,17 +66,6 @@ for \code{ggplot2::annotation_raster}.}
 \item{res}{when the result is a magick picture, the 
 \code{res} parameter used by \code{magick::image_graph}.
 Default is 144.}
-
-\item{checks}{when modifications are done, whether 
-to check the output values. The default is TRUE which 
-means whether the computed R, G and B values are 
-in the [0, 255] range will be checked, and, those > 255 will 
-be set to 255 and those < 0 will be set to 0 automatically. 
-However, you can turn off these checks and (FALSE).}
-
-\item{warn}{when \code{checks = TRUE}, whether 
-to create a warning when values > 255 or < 0 are found 
-and coerced to [0, 255].}
 }
 \description{
 The function modifies the R, G, B values 

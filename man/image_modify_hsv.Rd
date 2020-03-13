@@ -22,11 +22,8 @@ image_modify_hsv(
   mult_v = NULL,
   rescale_v = NULL,
   fun_v = NULL,
-  alpha = FALSE,
   result = "magick",
-  res = 144,
-  checks = TRUE,
-  warn = FALSE
+  res = 144
 )
 }
 \arguments{
@@ -62,9 +59,6 @@ for H. See above.}
 to change V values. Used in the same way as those 
 for H. See above.}
 
-\item{alpha}{whether to allow 
-the output colors have transparency. Default is FALSE.}
-
 \item{result}{the default is "magick", the output is 
 a magick picture. When it is "raster", a matrix is created 
 which can be use as a raster 
@@ -73,20 +67,9 @@ for \code{ggplot2::annotation_raster}.}
 \item{res}{when the result is a magick picture, the 
 \code{res} parameter used by \code{magick::image_graph}.
 Default is 144.}
-
-\item{checks}{when modifications are done, whether 
-to check the output values. The default is TRUE which 
-means whether the computed H, S and V values are 
-in the [0, 1] range will be checked, and, those > 1 will 
-be set to 1 and those < 0 will be set to 0 automatically. 
-However, you can turn off these checks and (FALSE).}
-
-\item{warn}{when \code{checks = TRUE}, whether 
-to create a warning when values > 1 or < 0 are found 
-and coerced to [0, 1].}
 }
 \description{
-The function modifies the H, S, V values 
+The function modifies the H (0 - 1), S, V values 
 of a vector of colors or an image. The 
 three channels can be modified separately.
 However, the most frequently used is 
