@@ -106,9 +106,10 @@ image_modify_rgb_v=function(x, fun_r=NULL, fun_g=NULL, fun_b=NULL,
 	if (result=="raster"){
 		return(x)
 	} else {
-		canv=magick::image_graph(width=ncpic, height=nrpic, bg="transparent", res=res, clip=FALSE)
-		grid::grid.raster(image=x, width=1, height=1)
-		grDevices::dev.off()
-		return(canv)
+		# canv=magick::image_graph(width=ncpic, height=nrpic, bg="transparent", res=res, clip=FALSE)
+		# grid::grid.raster(image=x, width=1, height=1)
+		# grDevices::dev.off()
+		# return(canv)
+		magick::image_read(x)
 	}
 }

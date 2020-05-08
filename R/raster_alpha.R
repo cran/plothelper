@@ -70,9 +70,10 @@ raster_alpha=function(color, alpha, result="raster", res=144){
 	if (result=="raster"){
 		final
 	} else {
-		canv=magick::image_graph(width=ncol(final), height=nrow(final), bg="transparent", res=res, clip=FALSE)
-		grid::grid.raster(image=final, width=1, height=1)
-		grDevices::dev.off()
-		return(canv)
+		# canv=magick::image_graph(width=ncol(final), height=nrow(final), bg="transparent", res=res, clip=FALSE)
+		# grid::grid.raster(image=final, width=1, height=1)
+		# grDevices::dev.off()
+		# return(canv)
+		magick::image_read(final)
 	}	
 }

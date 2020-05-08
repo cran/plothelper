@@ -39,3 +39,9 @@ showcolor=function(x, label_size=15, ...){
 			axis.text.x=ggplot2::element_text(size=label_size, lineheight=0.8)
 		)
 }
+
+myvisbook=function(){
+	message(
+		"The current URL for downloading data, code and images of my book:  \nhttps://github.com/githubwwwjjj/visbook"
+	)
+}

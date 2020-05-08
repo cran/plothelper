@@ -54,9 +54,6 @@ image_col_numeric=function(x, palette=c("purple", "yellow"), n=256, alpha=FALSE,
 	if (result=="raster"){
 		return(cha)
 	} else {
-		canv=magick::image_graph(width=width, height=height, bg="transparent", res=res)
-		grid::grid.raster(image=cha, width=1, height=1)
-		grDevices::dev.off()
-		return(canv)
+		magick::image_read(cha)
 	}
 }
